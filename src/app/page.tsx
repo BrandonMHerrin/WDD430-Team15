@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Navbar from '../components/navbar';
-import { Category } from '../types/category';
 import { categoriesData } from '../data/categories';
 import Toolbar from '../components/toolbar';
 import Image from "next/image";

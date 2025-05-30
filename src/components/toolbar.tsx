@@ -15,7 +15,7 @@ const Toolbar: React.FC<ToolBar> = ({ categories }) => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const handleCategoryClick = (categoryId: string) => {
-    
+    console.log(categoryId);
     setActiveDropdown(null);
   };
 
