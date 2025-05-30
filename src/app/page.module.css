@@ -43,7 +43,6 @@
 
 .hero_p {
   font-size: 3.25rem;
-  line-height: 2.75rem;
   text-align: center;
 }
 .hero_p_div {
@@ -109,6 +108,7 @@
   .page {
     padding: 32px;
     padding-bottom: 80px;
+    display: block;
   }
 
   .main {
@@ -149,4 +149,3 @@
     justify-content: center;
   }
 }
-
