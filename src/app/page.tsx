@@ -1,9 +1,34 @@
+'use client';
+
+import React from 'react';
+import Navbar from '../components/navbar';
+import { Category } from '../types/category';
+import { categoriesData } from '../data/categories';
+import Toolbar from '../components/toolbar';
 import Image from "next/image";
 import styles from "./page.module.css";
 
 export default function Home() {
+
+  const categories = categoriesData.filter(category => category.isActive);
+
+
+
   return (
-    <div className={styles.page}>
+    <div className="page-layout">
+      
+      <Navbar 
+        cartItemCount={3} 
+        isLoggedIn={false} 
+        userName="John"
+      />
+
+       <Toolbar 
+        categories={categories}
+        
+      />
+
+
       <main className={styles.main}>
         <Image
           className={styles.logo}
