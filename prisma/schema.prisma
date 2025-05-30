@@ -1,0 +1,77 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              Int     @id @default(autoincrement())
+  email           String  @unique @db.VarChar(255)
+  password        String @db.VarChar(255)
+  firstName       String @db.VarChar(155)
+  lastName        String @db.VarChar(155)
+  lastSignIn      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  stores Store[]
+}
+
+model Store {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(255)
+  description String @db.Text
+  ownerId Int
+  createdAt DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  products Product[]
+  storeImages StoreImage[]
+  owner User @relation(fields: [ownerId], references: [id])
+}
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  description String @db.Text
+  price Decimal @db.Decimal(10,2)
+  storeId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id])
+  productImages ProductImage[]
+}
+
+model ProductImage {
+  productId Int 
+  imageUrl String 
+  width Int @db.Integer
+  height Int @db.Integer
+  fileType FileType
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@id([productId, imageUrl])
+}
+
+model StoreImage {
+  storeId Int
+  imageUrl String
+  width Int
+  height Int
+  fileType FileType
+
+  store Store @relation(fields: [storeId], references: [id])
+
+  @@id([storeId, imageUrl])
+}
+
+enum FileType {
+  JPEG
+  JPG
+  PNG
+  WEBP
+}
