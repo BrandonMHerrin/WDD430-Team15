@@ -2,7 +2,7 @@ import Image from "next/image";
 import styles from "./embla.module.css";
 
 export function OnSaleCard () {
-
+ //example data to test carousel. This can be updated with the database data
   const images = [
     {
     title: "Wood Bird",
