@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "@prisma/client": "^6.8.2",
     "next": "15.1.8",
     "react": "^19.0.0",
