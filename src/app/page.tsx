@@ -1,10 +1,14 @@
+'use client'
+
 import Image from "next/image";
 import styles from "./page.module.css";
 import React from 'react'
 import EmblaCarousel from './ui/EmblaCarousel'
 import { EmblaOptionsType } from 'embla-carousel'
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
+  const router = useRouter()
 
   //On Sale Carousel
   const OPTIONS: EmblaOptionsType = { loop: true, slidesToScroll: 'auto' }
@@ -39,6 +43,20 @@ export default function Home() {
                 <br></br>
                 <button className={styles.button}>
                 Start Exploring
+              </button>
+               {/* Additional button to navigate to the login page */}
+              <button className={styles.button}
+                onClick={() => router.push('/pages/login')}
+              >
+                Go to Login
+              </button>
+              {/* Additional button to navigate to the signup page */}
+              <button
+                className={styles.button}
+                onClick={() => router.push('/pages/signup')}
+                style={{ marginLeft: '10px' }} 
+              >
+                Go to Signup
               </button>
               </p>
             </div>
