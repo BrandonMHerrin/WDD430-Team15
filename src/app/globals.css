@@ -1,6 +1,7 @@
 @import '../components/navbar-toolbar.css';
 
 :root {
+
   --background: var(--artisan-cream);
   --foreground: var(--text-primary);
 
@@ -24,6 +25,7 @@
     --foreground: var(--text-primary);
   }
 }
+
 
 html,
 body {

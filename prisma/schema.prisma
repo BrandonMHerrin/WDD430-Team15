@@ -1,0 +1,170 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              Int     @id @default(autoincrement())
+  email           String  @unique @db.VarChar(255)
+  password        String @db.VarChar(255)
+  firstName       String @db.VarChar(155)
+  lastName        String @db.VarChar(155)
+  lastSignIn      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  stores Store[]
+  cart Cart?
+  orders Order[]
+  productReviews ProductReview[]
+}
+
+model Store {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(255)
+  description String @db.Text
+  ownerId Int
+  createdAt DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  products Product[]
+  storeImages StoreImage[]
+  owner User @relation(fields: [ownerId], references: [id])
+}
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  description String @db.Text
+  price Decimal @db.Decimal(10,2)
+  storeId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id])
+  productImages ProductImage[]
+  productReviews ProductReview[]
+  cartItems CartItem[]
+  orderItems OrderItem[]
+}
+
+model ProductReview {
+  id Int @id @default(autoincrement())
+  title String @db.VarChar(255)
+  reviewText String @db.Text
+  productId Int
+  userId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ProductImage {
+  productId Int 
+  imageUrl String 
+  width Int @db.Integer
+  height Int @db.Integer
+  fileType FileType
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@id([productId, imageUrl])
+}
+
+model StoreImage {
+  storeId Int
+  imageUrl String
+  width Int
+  height Int
+  fileType FileType
+
+  store Store @relation(fields: [storeId], references: [id])
+
+  @@id([storeId, imageUrl])
+}
+
+model Cart {
+  id Int @id @default(autoincrement())
+  total Decimal @db.Decimal(10,2)
+  userId Int? @unique
+
+  user User? @relation(fields: [userId], references: [id])
+  cartItems CartItem[]
+}
+
+model CartItem {
+  id Int @id @default(autoincrement())
+  cartId Int
+  productId Int
+  price Decimal @db.Decimal(10,2)
+  quantity Int
+  total Decimal @db.Decimal(10,2)
+
+  cart Cart @relation(fields: [cartId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+  total Decimal @db.Decimal(10,2)
+  userId Int
+  shippingAddressId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+  shippingAddress Address @relation(fields: [shippingAddressId], references: [id])
+  orderItems OrderItem[]
+}
+
+model OrderItem {
+  id Int @id @default(autoincrement())
+  orderStatus OrderStatus
+  orderId Int
+  productId Int
+  price Decimal @db.Decimal(10,2)
+  quantity Int 
+  total Decimal @db.Decimal(10,2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Address {
+  id Int @id @default(autoincrement())
+  street1 String @db.VarChar(255)
+  street2 String @db.VarChar(255)
+  city String @db.VarChar(255)
+  state String @db.VarChar(255)
+  country String @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+}
+
+enum FileType {
+  JPEG
+  JPG
+  PNG
+  WEBP
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT    // Initial state when order is created
+  PAYMENT_FAILED     // Payment attempt unsuccessful
+  PROCESSING        // Payment received, order being prepared
+  CONFIRMED         // Order confirmed and ready for shipping
+  SHIPPED           // Order has been shipped
+  DELIVERED         // Order successfully delivered
+  CANCELLED         // Order cancelled by customer or seller
+  REFUNDED          // Order refunded to customer
+  RETURNED          // Order returned by customer
+}
