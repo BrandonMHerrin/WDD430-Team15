@@ -1,21 +1,22 @@
-// Here should be the categories (dynamic populated?), maybe dropdown menus (for subcategories)
-
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Category } from '../types/category';
 
 
 interface ToolBar {
-  categories: Category[];
- 
+    categories: Category[];
+    onCategorySelect?: (categoryId: string) => void;
+    isMobile?: boolean;
 }
 
 
-const Toolbar: React.FC<ToolBar> = ({ categories }) => {
+const Toolbar: React.FC<ToolBar> = ({ categories, onCategorySelect, isMobile = false }) => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const handleCategoryClick = (categoryId: string) => {
-    
+        if (onCategorySelect) {
+      onCategorySelect(categoryId);
+    }
     setActiveDropdown(null);
   };
 
@@ -24,7 +25,7 @@ const Toolbar: React.FC<ToolBar> = ({ categories }) => {
   };
 
   return (
-    <div className="toolbar">
+    <div className={`${isMobile ? 'toolbar-mobile' : 'toolbar-desktop'}`}>
       <div className="toolbar-container">
         {categories.map((category) => (
           <div key={category.id} className="category-item">
