@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
-import { ChevronDown } from 'lucide-react';
 import Toolbar from './toolbar';
 import { Category } from '../types/category';
 
