@@ -2,7 +2,7 @@
 
 ## Team Members
 --Brandon Melvin Herrin
---Jonathan Jacob Uribe Pinto
+--Jonathan Jacob Uribe Pintoz
 --Evenage Thelma Gorwa
 --Ruth Veronica
 
