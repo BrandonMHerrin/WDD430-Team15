@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import React from 'react'
-import EmblaCarousel from './ui/EmblaCarousel'
+import EmblaCarousel from '../../components/ui/EmblaCarousel'
 import { EmblaOptionsType } from 'embla-carousel'
 
 export default function Home() {
