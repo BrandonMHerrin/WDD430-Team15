@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
 import Toolbar from './toolbar';
 import { Category } from '../types/category';
+import { useRouter } from 'next/navigation';
 
 interface NavBar {
     // All optional properties 
@@ -16,11 +17,12 @@ interface NavBar {
 // destructuring + defaults: React.FC => It tells this is a React component
 const Navbar: React.FC<NavBar> = ({ 
   cartItemCount = 0, 
-  isLoggedIn = false, 
-  userName = "Guest",
+  //isLoggedIn = true, // just for mock test
+  userName = "Rakell",
   categories = [],
   onCategorySelect
 }) => {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -35,6 +37,14 @@ const Navbar: React.FC<NavBar> = ({
     // and push the result to a router, adding the the query as URL params
 
     console.log('Searching for:', searchQuery);
+  };
+
+  const handleCartClick = () => {
+    router.push('/cart');
+  };
+
+  const handleLogoClick = () => {
+    router.push('/');
   };
 
   
@@ -52,7 +62,10 @@ const Navbar: React.FC<NavBar> = ({
       </button>
 
       
-      <div className="navbar-logo">
+      <div className="navbar-logo"
+        onClick={handleLogoClick}
+        style={{ cursor: 'pointer' }}>
+        
         <Image
           src="/logo.png"
           alt="Artisan Marketplace"
@@ -84,12 +97,12 @@ const Navbar: React.FC<NavBar> = ({
         <div className="account-section">
           <User size={20} />
           <span className="account-text">
-            {isLoggedIn ? `Hi, ${userName}` : 'Sign in'}
+            Hi, {userName}
           </span>
         </div>
 
         
-        <div className="cart-section">
+        <div className="cart-section" onClick={handleCartClick}>
           <div className="cart-icon-container">
             <ShoppingCart size={20} />
             {cartItemCount > 0 && (
@@ -125,11 +138,11 @@ const Navbar: React.FC<NavBar> = ({
            
             <div className="mobile-account">
               <User size={24} />
-              <span>{isLoggedIn ? `Hi, ${userName}` : 'Sign in'}</span>
+              <span>Hi, {userName}</span>
             </div>
 
            
-            <div className="mobile-cart">
+            <div className="mobile-cart" onClick={handleCartClick}>
               <ShoppingCart size={24} />
               <span>Cart ({cartItemCount})</span>
             </div>

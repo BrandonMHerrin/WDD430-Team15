@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '../components/navbar';
 import { categoriesData } from '../data/categories';
 import Toolbar from '../components/toolbar';
@@ -8,10 +8,19 @@ import styles from "./page.module.css";
 import Image from 'next/image';
 import EmblaCarousel from './ui/EmblaCarousel';
 import { EmblaOptionsType } from 'embla-carousel';
+import { mockUserLocalSto } from '../lib/auth';
+import { getCartItemCount } from '../data/cartItems';
 
 export default function Home() {
 
   const categories = categoriesData.filter(category => category.isActive);
+
+  /**
+   * Begins loading mock authentication while page loads
+   */
+  useEffect(() => {
+    mockUserLocalSto();
+  }, []);
 
   const handleCategorySelect = (categoryId: string) => {
     console.log('Selected category:', categoryId);
@@ -22,15 +31,18 @@ export default function Home() {
   const OPTIONS: EmblaOptionsType = { loop: true, slidesToScroll: 'auto' }
   const SLIDE_COUNT = 8
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
-    
+  
+
+  const cartItemCount = getCartItemCount([]);
+
 
   return (
     <div className="page-layout">
       
       <Navbar 
-        cartItemCount={3} 
-        isLoggedIn={false} 
-        userName="John"
+        cartItemCount= {cartItemCount}
+        isLoggedIn={true} 
+        userName="Rakell"
         categories={categories}
         onCategorySelect={handleCategorySelect}
       />
