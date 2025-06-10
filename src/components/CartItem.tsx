@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Plus, Minus  } from 'lucide-react';
 import { CartItem as CartItemType } from '../types/cart'; //Renamed a variable
 
 interface CartItemProps {
@@ -25,11 +25,18 @@ const CartItem: React.FC<CartItemProps> = ({
   /*
    Dropdown selection for quantity change 
    */
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newQuantity = parseInt(e.target.value);
-    onUpdateQuantity(item.id, newQuantity);
+  const handleIncrease = () => {
+    if (item.quantity < 20) {
+      onUpdateQuantity(item.id, item.quantity + 1);
+    }
+  };
+    const handleDecrease = () => {
+    if (item.quantity > 1) { 
+      onUpdateQuantity(item.id, item.quantity - 1);
+    }
   };
 
+  
   /**
    * Handles item removal from cart
    */
@@ -66,21 +73,28 @@ const CartItem: React.FC<CartItemProps> = ({
         
         <div className="item-actions">
           <div className="quantity-section">
-            <label htmlFor={`qty-${item.id}`} className="quantity-label">
-              Qty:
-            </label>
-            <select
-              id={`qty-${item.id}`}
-              value={item.quantity}
-              onChange={handleQuantityChange}
-              className="quantity-select"
-            >
-              {[...Array(10)].map((_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  {i + 1}
-                </option>
-              ))}
-            </select>
+            <span className="quantity-label">Qty:</span>
+            <div className="quantity-controls">
+              <button 
+                className="quantity-btn decrease"
+                onClick={handleDecrease}
+                disabled={item.quantity <= 1}
+                title="Decrease quantity"
+              >
+                <Minus size={14} />
+              </button>
+              
+              <span className="quantity-display">{item.quantity}</span>
+              
+              <button 
+                className="quantity-btn increase"
+                onClick={handleIncrease}
+                disabled={item.quantity >= 10}
+                title="Increase quantity"
+              >
+                <Plus size={14} />
+              </button>
+            </div>
           </div>
 
           <button 
