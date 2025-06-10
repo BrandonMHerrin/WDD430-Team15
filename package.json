@@ -12,6 +12,7 @@
     "@prisma/client": "^6.8.2",
     "argon2": "^0.43.0",
     "bcryptjs": "^3.0.2",
+    "lucide-react": "^0.511.0",
     "embla-carousel": "^8.6.0",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
@@ -30,5 +31,7 @@
     "eslint-config-next": "15.1.8",
     "prisma": "^6.8.2",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "pnpm@10.6.4+sha512.da3d715bfd22a9a105e6e8088cfc7826699332ded60c423b14ec613a185f1602206702ff0fe4c438cb15c979081ce4cb02568e364b15174503a63c7a8e2a5f6c"
+
 }

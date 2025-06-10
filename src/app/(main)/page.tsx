@@ -1,19 +1,51 @@
-import Image from "next/image";
+'use client';
+
+import React from 'react';
+import Navbar from '../components/navbar';
+import { categoriesData } from '../data/categories';
+import Toolbar from '../components/toolbar';
 import styles from "./page.module.css";
-import React from 'react'
-import EmblaCarousel from '../../components/ui/EmblaCarousel'
-import { EmblaOptionsType } from 'embla-carousel'
+import Image from 'next/image';
+import EmblaCarousel from './ui/EmblaCarousel';
+import { EmblaOptionsType } from 'embla-carousel';
 
 export default function Home() {
 
-  //On Sale Carousel
+  const categories = categoriesData.filter(category => category.isActive);
+
+  const handleCategorySelect = (categoryId: string) => {
+    console.log('Selected category:', categoryId);
+    // Still missing, add later on here: filtering logic
+  };
+    
+
   const OPTIONS: EmblaOptionsType = { loop: true, slidesToScroll: 'auto' }
   const SLIDE_COUNT = 8
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
+    
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
+    <div className="page-layout">
+      
+      <Navbar 
+        cartItemCount={3} 
+        isLoggedIn={false} 
+        userName="John"
+        categories={categories}
+        onCategorySelect={handleCategorySelect}
+      />
+
+       <Toolbar 
+        categories={categories}
+        onCategorySelect={handleCategorySelect}
+        isMobile={false}
         
+      />
+
+
+      <div className={styles.page}>
+        <main className={styles.main}>
+
           <Image
             className={styles.banner_mobile} 
             src="/hero-mobile.jpg"
@@ -44,10 +76,16 @@ export default function Home() {
             </div>
           </div>
             <EmblaCarousel slides={SLIDES} options={OPTIONS} />          
+
       </main>
+
+
+
       <footer className={styles.footer}>
         © Handcrafted Haven | 2025 | Team 15
       </footer>
     </div>
+  </div>     
+
   );
 }
