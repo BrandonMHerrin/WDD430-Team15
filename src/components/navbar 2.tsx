@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
 import Toolbar from './toolbar';
 import { Category } from '../types/category';
-import Link from 'next/link';
 
 interface NavBar {
     // All optional properties 
@@ -82,18 +81,12 @@ const Navbar: React.FC<NavBar> = ({
       
       <div className="navbar-actions">
         
-        {/* <div className="account-section">
+        <div className="account-section">
           <User size={20} />
           <span className="account-text">
             {isLoggedIn ? `Hi, ${userName}` : 'Sign in'}
           </span>
-        </div> */}
-        <Link href={isLoggedIn ? '/profile' : '/auth/login'} className="account-section">
-          <User size={20} />
-          <span className="account-text">
-            {isLoggedIn ? `Hi, ${userName}` : 'Sign in'}
-          </span>
-        </Link>
+        </div>
 
         
         <div className="cart-section">

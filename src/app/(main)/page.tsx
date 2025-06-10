@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import Navbar from '../components/navbar';
-import { categoriesData } from '../data/categories';
-import Toolbar from '../components/toolbar';
+import Navbar from '@/components/navbar';
+import { categoriesData } from '@/data/categories';
+import Toolbar from '@/components/toolbar';
 import styles from "./page.module.css";
 import Image from 'next/image';
-import EmblaCarousel from './ui/EmblaCarousel';
+import EmblaCarousel from '@/components/ui/EmblaCarousel';
 import { EmblaOptionsType } from 'embla-carousel';
 
 export default function Home() {
