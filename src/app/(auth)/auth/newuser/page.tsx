@@ -1,14 +1,15 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Sign Up",
-  description: "Create a new account"
-}
+import CreateUserForm from "@/components/create-user-form/create-user-form";
+import { Suspense } from "react";
 
 export default function NewUserPage() {
   return (
     <>
       <h1>Sign Up</h1>
+      <Suspense>
+        <CreateUserForm />
+      </Suspense>
     </>
   )
 }

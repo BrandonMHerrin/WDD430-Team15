@@ -17,8 +17,7 @@ export default function LoginPage () {
       <p>
         No account? Create one now.
       </p>
-      <Link href="/auth/newuser">Create Account</Link>
-
+      <Link className={styles.link} href="/auth/newuser">Create Account</Link>
     </section>
   )
 }
