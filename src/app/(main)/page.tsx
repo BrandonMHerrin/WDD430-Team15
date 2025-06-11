@@ -15,6 +15,13 @@ export default function Home() {
 
   const categories = categoriesData.filter(category => category.isActive);
 
+  /**
+   * Begins loading mock authentication while page loads
+   */
+  useEffect(() => {
+    mockUserLocalSto();
+  }, []);
+
   const handleCategorySelect = (categoryId: string) => {
     console.log('Selected category:', categoryId);
     // Still missing, add later on here: filtering logic
@@ -24,7 +31,10 @@ export default function Home() {
   const OPTIONS: EmblaOptionsType = { loop: true, slidesToScroll: 'auto' }
   const SLIDE_COUNT = 8
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
-    
+  
+
+  const cartItemCount = getCartItemCount([]);
+
 
   return (
     <div className="page-layout">
