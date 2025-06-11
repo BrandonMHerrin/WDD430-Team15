@@ -1,12 +1,10 @@
 "use server";
 
 import { signIn } from "auth";
-import { AuthError } from "next-auth";
 import prisma from "./prisma-client";
 import { z } from "zod";
 import { hashPassword } from "./password-utility";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 const UserSchema = z.object({
   id: z.string(),
@@ -30,39 +28,54 @@ const UserSchema = z.object({
 
 const CreateUser = UserSchema.omit({ id: true });
 
-export type CreateUserState = {
+export type AuthenticateState = {
   errors?: {
-    email?: string[],
-    password?: string[],
-    firstName?: string[],
-    lastName?: string[]
-  },
-  message?: string | null
+    email?: string[];
+    password?: string[];
+  };
+  message?: string | null;
+  success?: boolean;
 }
 
 export async function authenticate(
-  prevState: string | undefined,
+  prevState: AuthenticateState | undefined,
   formData: FormData
-) {
+): Promise<AuthenticateState> {
   try {
-    await signIn("credentials", formData);
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case "CredentialsSignin":
-          return "Invalid credentials";
-        default:
-          return "Something went wrong";
-      }
+    await signIn("credentials", {
+      ...Object.fromEntries(formData),
+      redirect: false
+    });
+    return {
+      message: "Authenticated successfully",
+      success: true
     }
-    throw error;
+  } catch (error) {
+    console.error(error)
+    return {
+      message: "Failed to login",
+      success: false
+    }
   }
 }
+
+
+export type CreateUserState = {
+  errors?: {
+    email?: string[];
+    password?: string[];
+    firstName?: string[];
+    lastName?: string[];
+  };
+  message?: string | null;
+  success?: boolean;
+};
 
 export async function createUser(
   prevState: CreateUserState | undefined,
   formData: FormData
-) {
+): Promise<CreateUserState> {
+  console.log(`Creating user.`)
   const validatedFields = CreateUser.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -71,27 +84,33 @@ export async function createUser(
   });
 
   if (!validatedFields.success) {
+    console.error('Failed to validate input data.')
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Please correct the following errors: ",
+      success: false
     };
   }
   const { email, password, firstName, lastName } = validatedFields.data;
+  console.log('Extracted values from params.')
   try {
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
     if (existingUser) {
+      console.error('User already exists.')
       return {
         errors: {
           email: ["User with this email already exists"]
         },
         message: "Account creation failed",
+        success: false
       };
     }
 
     const hashedPassword = await hashPassword(password);
 
+    console.log('Creating user record in db.')
     const result = await prisma.user.create({
       data: {
         email,
@@ -100,14 +119,26 @@ export async function createUser(
         lastName,
       },
     });
-    if (result) {
-      revalidatePath("/auth/login");
-      redirect("/auth/login");
+    if (!result) {
+      return {
+        errors: {},
+        message: 'Failed to create user.',
+        success: false
+      }
+    }
+    console.log('Successfully created user.')
+    revalidatePath("/auth/login");
+    return {
+      errors: {},
+      message: 'Successfully created user.',
+      success: true
     }
   } catch (error) {
     console.error(`User creation error: ${error}`);
     return {
-      message: "Database error. Please try again."
+      errors: {},
+      message: "Database error. Please try again.",
+      success: false
     }
   }
 }

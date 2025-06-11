@@ -8,8 +8,10 @@ import styles from "./page.module.css";
 import Image from 'next/image';
 import EmblaCarousel from '@/components/ui/EmblaCarousel';
 import { EmblaOptionsType } from 'embla-carousel';
+import { useSession } from 'next-auth/react';
 
 export default function Home() {
+  const {data} = useSession()
 
   const categories = categoriesData.filter(category => category.isActive);
 
@@ -29,8 +31,10 @@ export default function Home() {
       
       <Navbar 
         cartItemCount={3} 
-        isLoggedIn={false} 
-        userName="John"
+        isLoggedIn={!!data?.user} 
+        // isLoggedIn={false} 
+        // userName="Jogn"
+        userName={data?.user?.name ? data.user.name : undefined}
         categories={categories}
         onCategorySelect={handleCategorySelect}
       />

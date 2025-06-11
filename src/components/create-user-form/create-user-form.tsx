@@ -1,37 +1,66 @@
-import { createUser } from "@/lib/actions";
-import { useActionState } from "react";
-import styles from './create-user-form.module.css'
+"use client";
+
+import { createUser, CreateUserState } from "@/lib/actions";
+import { useActionState, useEffect } from "react";
+import styles from "./create-user-form.module.css";
+import { useRouter } from "next/navigation";
 
 export default function CreateUserForm() {
-    const [errorMessage, formAction, isPending] = useActionState(
-      createUser,
-      undefined
-    );
+  const router = useRouter();
+  const initialState: CreateUserState = {
+    errors: {},
+    message: null,
+    success: false,
+  };
+  const [state, formAction] = useActionState(createUser, initialState);
+  useEffect(() => {
+    if (state?.success) {
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 1500);
+    }
+  }, [state?.success, router]);
 
-    return (
+  return (
+    <>
+      {state?.success && (
+        <p>{state?.message}</p>
+        )}
       <form action={formAction}>
         <label>
           First Name
           <input
-            id="fname"
-            name="fname"
+            id="firstName"
+            name="firstName"
             type="text"
             required
             placeholder="Enter your first name"
             className={styles.inputItem}
           />
         </label>
+        <div>
+          {state?.errors?.firstName &&
+            state.errors.firstName.map((error: string) => (
+              <p key={error}>{error}</p>
+            ))}
+        </div>
         <label>
           Last Name
           <input
-            id="lname"
-            name="lname"
+            id="lastName"
+            name="lastName"
             type="text"
             required
             placeholder="Enter your last name"
             className={styles.inputItem}
           />
         </label>
+        <div>
+          {state?.errors?.lastName &&
+            state.errors.lastName.map((error: string) => (
+              <p key={error}>{error}</p>
+            ))}
+        </div>
         <label>
           Email
           <input
@@ -43,6 +72,12 @@ export default function CreateUserForm() {
             className={styles.inputItem}
           />
         </label>
+        <div>
+          {state?.errors?.email &&
+            state.errors.email.map((error: string) => (
+              <p key={error}>{error}</p>
+            ))}
+        </div>
         <label>
           Password
           <input
@@ -55,19 +90,21 @@ export default function CreateUserForm() {
             className={styles.inputItem}
           />
         </label>
-        <input
-          className={styles.submitButton}
-          type="submit"
-          disabled={isPending}
-          aria-disabled={isPending}
-        />
         <div>
-          {errorMessage && (
+          {state?.errors?.password &&
+            state.errors.password.map((error: string) => (
+              <p key={error}>{error}</p>
+            ))}
+        </div>
+        <input className={styles.submitButton} type="submit" />
+        <div>
+          {!state.success && (
             <>
-              <p>{errorMessage.message}</p>
+              <p>{state.message}</p>
             </>
           )}
         </div>
       </form>
-    );
+    </>
+  );
 }

@@ -1,7 +1,14 @@
-export default function MainLayout({children}: Readonly<{children: React.ReactNode}>) {
+import { auth } from "auth"
+import { SessionProvider } from "next-auth/react";
+
+export default async function MainLayout({children}: Readonly<{children: React.ReactNode}>) {
+  const session = await auth();
+ 
   return (
-    <main>
-      {children}
-    </main>
+    <SessionProvider session={session} refetchInterval={0} refetchOnWindowFocus={false}>
+      <main>
+        {children}
+      </main>
+    </SessionProvider>
   )
 }
