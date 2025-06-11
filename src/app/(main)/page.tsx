@@ -18,9 +18,9 @@ export default function Home() {
   /**
    * Begins loading mock authentication while page loads
    */
-  useEffect(() => {
-    mockUserLocalSto();
-  }, []);
+  // useEffect(() => {
+  //   mockUserLocalSto();
+  // }, []);
 
   const handleCategorySelect = (categoryId: string) => {
     console.log('Selected category:', categoryId);
@@ -33,7 +33,7 @@ export default function Home() {
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
   
 
-  const cartItemCount = getCartItemCount([]);
+  // const cartItemCount = getCartItemCount([]);
 
 
   return (
