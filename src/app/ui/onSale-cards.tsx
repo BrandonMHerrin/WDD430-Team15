@@ -2,6 +2,13 @@ import Image from "next/image";
 import styles from "./embla.module.css";
 
 export function OnSaleCard () {
+  
+  // const [ product, images] = await Promise.all([
+  //   fetchAllProducts(), 
+  //   fetchAllImages()
+  // ]);
+  // const randomProduct = [];
+
  //example data to test carousel. This can be updated with the database data
   const images = [
     {

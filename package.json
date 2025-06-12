@@ -9,14 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "lucide-react": "^0.511.0",
+    "@prisma/client": "^6.8.2",
     "embla-carousel": "^8.6.0",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
-    "@prisma/client": "^6.8.2",
+    "lucide-react": "^0.511.0",
     "next": "15.1.8",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -29,5 +30,4 @@
     "typescript": "^5"
   },
   "packageManager": "pnpm@10.6.4+sha512.da3d715bfd22a9a105e6e8088cfc7826699332ded60c423b14ec613a185f1602206702ff0fe4c438cb15c979081ce4cb02568e364b15174503a63c7a8e2a5f6c"
-
 }
