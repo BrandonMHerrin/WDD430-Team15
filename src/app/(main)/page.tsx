@@ -1,26 +1,26 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import Navbar from '../components/navbar';
-import { categoriesData } from '../data/categories';
-import Toolbar from '../components/toolbar';
+import React from 'react';
+import Navbar from '@/components/navbar';
+import { categoriesData } from '@/data/categories';
+import Toolbar from '@/components/toolbar';
 import styles from "./page.module.css";
 import Image from 'next/image';
-import EmblaCarousel from './ui/EmblaCarousel';
+import EmblaCarousel from '@/components/ui/EmblaCarousel';
 import { EmblaOptionsType } from 'embla-carousel';
-import { mockUserLocalSto } from '../lib/auth';
-import { getCartItemCount } from '../data/cartItems';
+import { useSession } from 'next-auth/react';
 
 export default function Home() {
+  const {data} = useSession()
 
   const categories = categoriesData.filter(category => category.isActive);
 
   /**
    * Begins loading mock authentication while page loads
    */
-  useEffect(() => {
-    mockUserLocalSto();
-  }, []);
+  // useEffect(() => {
+  //   mockUserLocalSto();
+  // }, []);
 
   const handleCategorySelect = (categoryId: string) => {
     console.log('Selected category:', categoryId);
@@ -33,16 +33,18 @@ export default function Home() {
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
   
 
-  const cartItemCount = getCartItemCount([]);
+  // const cartItemCount = getCartItemCount([]);
 
 
   return (
     <div className="page-layout">
       
       <Navbar 
-        cartItemCount= {cartItemCount}
-        isLoggedIn={true} 
-        userName="Rakell"
+        cartItemCount={3} 
+        isLoggedIn={!!data?.user} 
+        // isLoggedIn={false} 
+        // userName="Jogn"
+        userName={data?.user?.name ? data.user.name : undefined}
         categories={categories}
         onCategorySelect={handleCategorySelect}
       />
