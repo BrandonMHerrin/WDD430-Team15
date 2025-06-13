@@ -1,15 +1,20 @@
-// import  style  from "../page.module.css";
-//import { createReview } from "@/app/lib/actions";
+import { createReview } from "@/lib/actions-test";
 import { Button } from "@/components/button";
 import Link from 'next/link';
 import Form from "next/form";
+import { useActionState } from "react";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 
-export default function NewReview({productId}: {productId:string}) {
+export default function NewReview({productId}: {productId:number}) {
 
-    const product = productId;
+    // const product = productId;
+    // const initialState: NewReviewState = {
+    //     errors: {},
+    //     message: null
+    // }
+    //  const [state, formAction] = useActionState(createReview, initialState);
 //     async function formSubmit(formData: FormData) {
         
 //         const title = formData.get('title') as string;
@@ -27,7 +32,7 @@ export default function NewReview({productId}: {productId:string}) {
                  <div className="new-review">
                 <input 
                 name="user name" 
-                id={product}
+                // id={product}
                 type="text"
                 readOnly={true}
                 value="User name"

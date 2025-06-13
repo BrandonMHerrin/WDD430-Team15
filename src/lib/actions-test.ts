@@ -1,12 +1,12 @@
 'use server';
-import { prisma } from "@/lib/prisma";
+import prisma from "./prisma-client";
 
 //Product Reviews
 export async function createReview(
     title:string, 
     reviewText:string, 
-    productId:string, 
-    userId:string
+    productId:number, 
+    userId:number
     ) {
     try{
         

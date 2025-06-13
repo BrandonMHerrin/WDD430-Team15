@@ -5,3 +5,7 @@ export type ReviewsField = {
     productId: string,
     userId: string
 }
+
+export type NewReviewState = {
+    
+}

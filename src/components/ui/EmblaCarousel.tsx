@@ -10,7 +10,7 @@ import {
 import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
 import  styles  from "./embla.module.css"
-import { OnSaleCard } from "./onSale-cards";
+import { ProductCard } from "./ProductCards";
 
 type PropType = {
   slides: number[]
@@ -48,7 +48,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
             <div className={styles.embla__slide} key={index}>
               
               <div className={styles.embla__slide__number}>
-                <OnSaleCard/>
+                <ProductCard/>
                 
               </div>
               

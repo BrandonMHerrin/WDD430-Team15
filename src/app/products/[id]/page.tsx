@@ -1,6 +1,6 @@
 'use client'
 //import { Metadata } from 'next';
-import React, { useEffect } from 'react';
+import React, { Usable, useEffect, useId } from 'react';
 import Image from 'next/image';
 import Navbar from "@/components/navbar";
 import Toolbar from "@/components/toolbar";
@@ -10,16 +10,23 @@ import { getCartItemCount } from "@/data/cartItems";
 import { Button } from '@/components/button';
 import Star from '@/components/Stars';
 import { User } from 'lucide-react';
-
-import  NewReview from '@/components/product/comment-form'
-//import { useSearchParams } from 'next/navigation';
-//import { fetchProductReviews } from '@/app/lib/actions';
+import  NewReview from '@/components/product/comment-form';
+// import { 
+//   fetchProductReviewsbyId, 
+//   fetchProductImagebyId,
+//   fetchProductReviewsbyId } from '@/lib/actions-test';
+import { useRouter } from 'next/navigation';
+import { productsData, productImagesData} from '@/data/products';
  
 // export const metadata: Metadata = {
 //   title: 'Product page',
 // };
 
-export default function Page() {
+export default function ProductPage({ params }:{
+  params: Promise<{
+    id: number
+  }>
+}) {
    const categories = categoriesData.filter(category => category.isActive);
   
     /**
@@ -35,10 +42,15 @@ export default function Page() {
     };
     const cartItemCount = getCartItemCount([]);
 
-  
- // const paramId = useSearchParams()
-//  const productId= paramId.get("id")
-//  const reviews = await fetchProductReviews();
+  // const reviews = await getProductbyId();
+  // const reviews = await getProductImagebyId();
+  // const reviews = await getProductReviewsbyId();
+ // const router = useRouter();
+  const id = React.use(params);
+  const data = productsData[0];
+  const image = productImagesData[0];
+  //console.log(data)
+
   return (
   <div className="page-layout">
     <Navbar 
@@ -62,14 +74,14 @@ export default function Page() {
           <div className='imgs-thbn'>
             <Image
             className='thumbnails'
-            src="/images/a.jpg"
+            src={image.imageUrl}
             alt='thumbbail'
             width={100}
             height={70}
             />
             <Image
                   className="product-img" 
-                  src="/images/a.jpg"
+                  src={image.imageUrl}
                   alt="product Image"
                   width={600}
                   height={400}
@@ -80,10 +92,10 @@ export default function Page() {
         
             {/* Product description and details  */}
             <div className='product-details'>
-              <h3>Title Product Name Good Haven</h3>
-              <p className='price'>$000,00</p>
-              <p className='stars'>{<Star rate={4}/>}</p>
-              <p>Description Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni consequatur culpa aperiam laboriosam possimus eligendi unde. Beatae soluta rem temporibus laboriosam. Laboriosam, sunt? Laudantium cum quisquam alias. Nisi, accusantium qui.</p>
+              <h3>{data.name}</h3>
+              <p className='price'>${data.price}</p>
+              <div className='stars'>{<Star rate={4}/>}</div>
+              <p>{data.description}</p>
               <p className='status'>In Stock</p>
               <label htmlFor='Quantity'>Quantity  </label>
               <select name='Quantity' defaultValue={1}>{[...Array(10)].map((_, i) => i + 1)
@@ -110,7 +122,7 @@ export default function Page() {
           </div>
           {/* Only if session is started. getSession() */}
           <div className="new-comments">
-          <NewReview productId='1'/>
+          <NewReview productId={1}/>
           </div>
         </div>
         </main>
