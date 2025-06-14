@@ -2,6 +2,11 @@ import LoginForm from "@/app/(auth)/auth/login/components/login-form/login-form"
 import styles from "./page.module.css";
 import Link from "next/link";
 
+export const metadata = {
+  title: "Login",
+  description: "Login to your account",
+}
+
 export default function LoginPage() {
   return (
     <section className={styles.container}>

@@ -55,8 +55,8 @@ export default function AccountMenu(): React.JSX.Element {
             className={styles.profileButton}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <span>
-              {/* <User size={24} /> */}
+            <span className={styles.profileInfo}>
+              <User size={24} className={styles.userIcon} />
               Hi, {userName}
             </span>
             <ChevronDown size={16} className={`${styles.chevron} ${isDropdownOpen ? styles.chevronRotated : ''}`} />
