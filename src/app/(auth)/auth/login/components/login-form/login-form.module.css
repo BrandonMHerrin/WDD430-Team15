@@ -1,0 +1,19 @@
+.form {
+  display: grid;
+  grid-column: auto;
+  gap: .5rem;
+}
+
+.inputItem {
+  display: block;
+  width: 100%;
+  padding: .5rem;
+  background-color: var(--artisan-cream);
+  color: black;
+}
+
+.submitButton {
+  padding: .5rem;
+  background-color: var(--artisan-terracotta);
+  color: white;
+}

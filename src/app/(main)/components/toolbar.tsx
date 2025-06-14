@@ -2,25 +2,25 @@
 
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { Category } from "../types/category";
+import { Category } from "../../../types/category";
 
 interface ToolBar {
   categories: Category[];
-  // onCategorySelect?: (categoryId: string) => void;
+  onCategorySelect?: (categoryId: number) => void;
   isMobile?: boolean;
 }
 
 const Toolbar: React.FC<ToolBar> = ({
   categories,
-  // onCategorySelect,
+  onCategorySelect,
   isMobile = false,
 }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
 
   const handleCategoryClick = (categoryId: number) => {
-    // if (onCategorySelect) {
-    //   onCategorySelect(categoryId);
-    // }
+    if (onCategorySelect) {
+      onCategorySelect(categoryId);
+    }
     setActiveDropdown(null);
   };
 
@@ -63,9 +63,7 @@ const Toolbar: React.FC<ToolBar> = ({
                     <button
                       key={index}
                       className="dropdown-item"
-                      onClick={() =>
-                        handleCategoryClick(subcategory.id)
-                      }
+                      onClick={() => handleCategoryClick(category.id)}
                     >
                       {subcategory.name}
                     </button>

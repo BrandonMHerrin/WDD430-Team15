@@ -1,11 +1,11 @@
 export interface Category {
-    id: string;
+    id: number;
     name: string;
-    description?: string;
-    imageUrl?: string;
-    subcategories?: string[]; 
-    isActive: boolean;
+    description: string | null;
+    // imageUrl?: string;
+    children?: Category[]; 
+    // isActive: boolean;
     sortOrder: number;
-    createdAt: Date;
-    updatedAt: Date;
+    // createdAt: Date;
+    // updatedAt: Date;
 }
