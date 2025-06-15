@@ -2,13 +2,11 @@
 import React, { useEffect } from 'react';
 import Navbar from "@/components/navbar";
 import Toolbar from "@/components/toolbar";
-import { categoriesData } from '@/data/categories';
 import { mockUserLocalSto } from '@/lib/auth';
 import { getCartItemCount } from "@/data/cartItems";
 import { ProductCard } from '@/components/ui/ProductCards';
 
 export default function Page() {
-   const categories = categoriesData.filter(category => category.isActive);
   
     /**
      * Begins loading mock authentication while page loads
@@ -31,16 +29,10 @@ export default function Page() {
         cartItemCount= {cartItemCount}
         isLoggedIn={true} 
         userName="Rakell"
-        categories={categories}
         onCategorySelect={handleCategorySelect}
       />
 
-       <Toolbar 
-        categories={categories}
-        onCategorySelect={handleCategorySelect}
-        isMobile={false}
-        
-      />
+
 
         <main>
           <div className='product-grid'>

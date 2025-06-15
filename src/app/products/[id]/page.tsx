@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Navbar from "@/components/navbar";
 import Toolbar from "@/components/toolbar";
-import { categoriesData } from '@/data/categories';
+//import { categoriesData } from '@/data/categories';
 import { mockUserLocalSto } from '@/lib/auth';
 import { getCartItemCount } from "@/data/cartItems";
 import { Button } from '@/components/button';
