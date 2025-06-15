@@ -1,105 +1,63 @@
-'use client';
+// "use client";
 
-import React from 'react';
-import Navbar from '@/components/navbar';
-import { categoriesData } from '@/data/categories';
-import Toolbar from '@/components/toolbar';
+import React from "react";
+import Navbar from "@/app/(main)/components/navbar";
+// import { categoriesData } from "@/data/categories";
+import Toolbar from "@/app/(main)/components/toolbar";
 import styles from "./page.module.css";
-import Image from 'next/image';
-import EmblaCarousel from '@/components/ui/EmblaCarousel';
-import { EmblaOptionsType } from 'embla-carousel';
-import { useSession } from 'next-auth/react';
+import Image from "next/image";
+import EmblaCarousel from "@/components/ui/EmblaCarousel";
+import { EmblaOptionsType } from "embla-carousel";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Welcome to Handcrafted Haven, your destination for artisanal products.",
+}
 
 export default function Home() {
-  const {data} = useSession()
 
-  const categories = categoriesData.filter(category => category.isActive);
-
-  /**
-   * Begins loading mock authentication while page loads
-   */
-  // useEffect(() => {
-  //   mockUserLocalSto();
-  // }, []);
-
-  const handleCategorySelect = (categoryId: string) => {
-    console.log('Selected category:', categoryId);
-    // Still missing, add later on here: filtering logic
-  };
-    
-
-  const OPTIONS: EmblaOptionsType = { loop: true, slidesToScroll: 'auto' }
-  const SLIDE_COUNT = 8
-  const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
-  
-
-  // const cartItemCount = getCartItemCount([]);
-
+  const OPTIONS: EmblaOptionsType = { loop: true, slidesToScroll: "auto" };
+  const SLIDE_COUNT = 8;
+  const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
 
   return (
     <div className="page-layout">
-      
-      <Navbar 
-        cartItemCount={3} 
-        isLoggedIn={!!data?.user} 
-        // isLoggedIn={false} 
-        // userName="Jogn"
-        userName={data?.user?.name ? data.user.name : undefined}
-        categories={categories}
-        onCategorySelect={handleCategorySelect}
-      />
-
-       <Toolbar 
-        categories={categories}
-        onCategorySelect={handleCategorySelect}
-        isMobile={false}
-        
-      />
-
-
       <div className={styles.page}>
         <main className={styles.main}>
-
           <Image
-            className={styles.banner_mobile} 
+            className={styles.banner_mobile}
             src="/hero-mobile.jpg"
             alt="banner"
             width={600}
             height={400}
             priority
-        
           />
           <div className={styles.desktop_banner}>
             <Image
-              className={styles.banner} 
+              className={styles.banner}
               src="/hero-desktop.jpg"
               alt="banner"
               width={1920}
               height={1040}
               priority
-              
             />
 
             <div className={styles.hero_p_div}>
-              <p className={styles.hero_p}>Real Hands. Real Craft. Real You
+              <p className={styles.hero_p}>
+                Real Hands. Real Craft. Real You
                 <br></br>
-                <button className={styles.button}>
-                Start Exploring
-              </button>
+                <button className={styles.button}>Start Exploring</button>
               </p>
             </div>
           </div>
-            <EmblaCarousel slides={SLIDES} options={OPTIONS} />          
+          <EmblaCarousel slides={SLIDES} options={OPTIONS} />
+        </main>
 
-      </main>
-
-
-
-      <footer className={styles.footer}>
-        © Handcrafted Haven | 2025 | Team 15
-      </footer>
+        <footer className={styles.footer}>
+          © Handcrafted Haven | 2025 | Team 15
+        </footer>
+      </div>
     </div>
-  </div>     
-
   );
 }

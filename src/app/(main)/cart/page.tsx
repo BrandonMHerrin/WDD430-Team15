@@ -1,16 +1,24 @@
 // src/app/cart/page.tsx
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Navbar from '../../components/navbar';
-import Toolbar from '../../components/toolbar';
-import CartItem from '../../components/CartItem';
-import { categoriesData } from '../../data/categories';
-import { mockCartItems, calculateCartTotal, getCartItemCount } from '../../data/cartItems';
-import { CartItem as CartItemType } from '../../types/cart';
-import { mockUserLocalSto, getCurrentUser, updateUserData } from '../../lib/auth';
-import { ShoppingCart, CheckCircle, X } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Navbar from "../components/navbar";
+import Toolbar from "../components/toolbar";
+import CartItem from "../../../components/CartItem";
+// import { categoriesData } from "../../../data/categories";
+import {
+  mockCartItems,
+  calculateCartTotal,
+  getCartItemCount,
+} from "../../../data/cartItems";
+import { CartItem as CartItemType } from "../../../types/cart";
+import {
+  mockUserLocalSto,
+  getCurrentUser,
+  updateUserData,
+} from "../../../lib/auth";
+import { ShoppingCart, CheckCircle, X } from "lucide-react";
 
 export default function CartPage() {
   const router = useRouter();
@@ -18,7 +26,7 @@ export default function CartPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const categories = categoriesData.filter(category => category.isActive);
+  // const categories = categoriesData.filter((category) => category.isActive);
   const cartTotal = calculateCartTotal(cartItems);
   const itemCount = getCartItemCount(cartItems);
 
@@ -28,7 +36,7 @@ export default function CartPage() {
   useEffect(() => {
     // Initialize mock authentication
     mockUserLocalSto();
-    
+
     // Load cart items from mock data
     setCartItems(mockCartItems);
     setIsLoading(false);
@@ -38,7 +46,7 @@ export default function CartPage() {
    * Handles category selection from toolbar
    */
   const handleCategorySelect = (categoryId: string) => {
-    console.log('Selected category:', categoryId);
+    console.log("Selected category:", categoryId);
     // TODO: Navigate to category page
   };
 
@@ -48,13 +56,11 @@ export default function CartPage() {
    * @param newQuantity - New quantity value
    */
   const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
-    setCartItems(prevItems => {
-      const updatedItems = prevItems.map(item =>
-        item.id === itemId 
-          ? { ...item, quantity: newQuantity }
-          : item
+    setCartItems((prevItems) => {
+      const updatedItems = prevItems.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
       );
-      
+
       // Update user data in localStorage
       const currentUser = getCurrentUser();
       if (currentUser) {
@@ -63,7 +69,7 @@ export default function CartPage() {
         currentUser.cart.updatedAt = new Date();
         updateUserData(currentUser);
       }
-      
+
       return updatedItems;
     });
   };
@@ -73,9 +79,9 @@ export default function CartPage() {
    * @param itemId - ID of the cart item to remove
    */
   const handleRemoveItem = (itemId: string) => {
-    setCartItems(prevItems => {
-      const updatedItems = prevItems.filter(item => item.id !== itemId);
-      
+    setCartItems((prevItems) => {
+      const updatedItems = prevItems.filter((item) => item.id !== itemId);
+
       // Update user data in localStorage
       const currentUser = getCurrentUser();
       if (currentUser) {
@@ -84,7 +90,7 @@ export default function CartPage() {
         currentUser.cart.updatedAt = new Date();
         updateUserData(currentUser);
       }
-      
+
       return updatedItems;
     });
   };
@@ -96,7 +102,7 @@ export default function CartPage() {
   const handlePurchase = () => {
     // Clear cart items
     setCartItems([]);
-    
+
     // Update user data to empty cart
     const currentUser = getCurrentUser();
     if (currentUser) {
@@ -105,7 +111,7 @@ export default function CartPage() {
       currentUser.cart.updatedAt = new Date();
       updateUserData(currentUser);
     }
-    
+
     // Show success modal
     setShowSuccessModal(true);
   };
@@ -115,20 +121,20 @@ export default function CartPage() {
    */
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
-    router.push('/');
+    router.push("/");
   };
 
   /**
    * Navigates back to continue shopping
    */
   const handleContinueShopping = () => {
-    router.push('/');
+    router.push("/");
   };
 
   if (isLoading) {
     return (
       <div className="page-layout">
-        <Navbar 
+        {/* <Navbar 
           cartItemCount={0}
           isLoggedIn={true}
           userName="John"
@@ -139,7 +145,7 @@ export default function CartPage() {
           categories={categories}
           onCategorySelect={handleCategorySelect}
           isMobile={false}
-        />
+        /> */}
         <div className="loading-container">
           <div className="loading-spinner" />
           <p>Loading your cart...</p>
@@ -152,7 +158,7 @@ export default function CartPage() {
   if (cartItems.length === 0 && !showSuccessModal) {
     return (
       <div className="page-layout">
-        <Navbar 
+        {/* <Navbar 
           cartItemCount={0}
           isLoggedIn={true}
           userName="John"
@@ -163,14 +169,14 @@ export default function CartPage() {
           categories={categories}
           onCategorySelect={handleCategorySelect}
           isMobile={false}
-        />
+        /> */}
 
         <div className="cart-page">
           <div className="empty-cart">
             <ShoppingCart size={80} color="var(--artisan-beige)" />
             <h2>Your Amazon Cart is empty</h2>
             <p>Shop today's deals and discover handmade treasures</p>
-            <button 
+            <button
               className="continue-shopping-btn"
               onClick={handleContinueShopping}
             >
@@ -184,7 +190,7 @@ export default function CartPage() {
 
   return (
     <div className="page-layout">
-      <Navbar 
+      {/* <Navbar 
         cartItemCount={itemCount}
         isLoggedIn={true}
         userName="John"
@@ -195,7 +201,7 @@ export default function CartPage() {
         categories={categories}
         onCategorySelect={handleCategorySelect}
         isMobile={false}
-      />
+      /> */}
 
       <div className="cart-page">
         <div className="cart-container">
@@ -207,7 +213,7 @@ export default function CartPage() {
             </div>
 
             <div className="cart-items-list">
-              {cartItems.map(item => (
+              {cartItems.map((item) => (
                 <CartItem
                   key={item.id}
                   item={item}
@@ -222,23 +228,23 @@ export default function CartPage() {
           <div className="order-summary-section">
             <div className="order-summary">
               <h3>Order Summary</h3>
-              
+
               <div className="summary-row">
                 <span>Items ({itemCount}):</span>
                 <span>${cartTotal.toFixed(2)}</span>
               </div>
-              
+
               <div className="summary-row">
                 <span>Shipping & handling:</span>
                 <span>$0.00</span>
               </div>
-              
+
               <div className="summary-row total">
                 <strong>Order total:</strong>
                 <strong className="total-price">${cartTotal.toFixed(2)}</strong>
               </div>
 
-              <button 
+              <button
                 className="checkout-btn"
                 onClick={handlePurchase}
                 disabled={cartItems.length === 0}
@@ -259,20 +265,23 @@ export default function CartPage() {
       {showSuccessModal && (
         <div className="modal-overlay">
           <div className="success-modal">
-            <button 
-              className="close-btn"
-              onClick={handleCloseSuccessModal}
-            >
+            <button className="close-btn" onClick={handleCloseSuccessModal}>
               <X size={24} />
             </button>
-            
+
             <div className="success-content">
               <CheckCircle size={80} color="var(--artisan-olive)" />
               <h2>Order Placed Successfully! 🎉</h2>
-              <p>Thank you for your purchase! Your handmade items are being prepared for shipment.</p>
-              <p>You'll receive a confirmation email shortly with tracking information.</p>
-              
-              <button 
+              <p>
+                Thank you for your purchase! Your handmade items are being
+                prepared for shipment.
+              </p>
+              <p>
+                You'll receive a confirmation email shortly with tracking
+                information.
+              </p>
+
+              <button
                 className="continue-btn"
                 onClick={handleCloseSuccessModal}
               >
@@ -302,7 +311,7 @@ export default function CartPage() {
           background: white;
           border-radius: 8px;
           overflow: hidden;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .cart-header {
@@ -341,7 +350,7 @@ export default function CartPage() {
           border: 1px solid var(--border-light);
           border-radius: 8px;
           padding: 1.5rem;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .order-summary h3 {
@@ -465,8 +474,12 @@ export default function CartPage() {
         }
 
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
 
         .modal-overlay {
@@ -490,7 +503,7 @@ export default function CartPage() {
           width: 90%;
           position: relative;
           text-align: center;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
         .close-btn {
@@ -543,7 +556,7 @@ export default function CartPage() {
         }
 
         .continue-btn:hover {
-          background: #8B332C;
+          background: #8b332c;
         }
 
         @media (max-width: 768px) {
@@ -589,4 +602,3 @@ export default function CartPage() {
     </div>
   );
 }
- 
