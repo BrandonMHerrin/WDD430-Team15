@@ -1,21 +1,24 @@
 {
   "name": "wdd15-team-project",
   "version": "0.1.0",
-  "private": true,
+  "private": "true",
+
+
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
+
   "dependencies": {
+    "@prisma/client": "^6.8.2",
     "embla-carousel": "^8.6.0",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
-    "@prisma/client": "^6.8.2",
-    "next": "15.1.8",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "next": "^15.3.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
