@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import React from "react";
 import Navbar from "@/app/(main)/components/navbar";
@@ -8,28 +8,18 @@ import styles from "./page.module.css";
 import Image from "next/image";
 import EmblaCarousel from "@/components/ui/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
-import { useSession } from "next-auth/react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Welcome to Handcrafted Haven, your destination for artisanal products.",
+}
 
 export default function Home() {
-  const { data } = useSession();
-
-  /**
-   * Begins loading mock authentication while page loads
-   */
-  // useEffect(() => {
-  //   mockUserLocalSto();
-  // }, []);
-
-  const handleCategorySelect = (categoryId: string) => {
-    console.log("Selected category:", categoryId);
-    // Still missing, add later on here: filtering logic
-  };
 
   const OPTIONS: EmblaOptionsType = { loop: true, slidesToScroll: "auto" };
   const SLIDE_COUNT = 8;
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
-
-  // const cartItemCount = getCartItemCount([]);
 
   return (
     <div className="page-layout">
