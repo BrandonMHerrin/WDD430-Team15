@@ -1,12 +1,15 @@
 import Image from "next/image";
 import styles from "./embla.module.css";
 import { useRouter } from 'next/navigation';
+import { 
+  getAllProducts, 
+  getAllProductImages } from '@/lib/product-actions'
 
 export function ProductCard () {
   
   // const [ product, images] = await Promise.all([
-  //   fetchAllProducts(), 
-  //   fetchAllImages()
+  //     getAllProducts(), 
+  //      getAllProductImages()
   // ]);
   // const randomProduct = [];
 
@@ -56,6 +59,7 @@ export function ProductCard () {
     }, 
   ]
   const product = products[Math.floor(Math.random() * products.length)];
+  
    const router = useRouter();
     const gotoProduct = () => {
       router.push(`/products/${product.id}/`)

@@ -1,23 +1,11 @@
 'use client'
-//import { Metadata } from 'next';
 import React, { useEffect } from 'react';
-import Image from 'next/image';
 import Navbar from "@/components/navbar";
 import Toolbar from "@/components/toolbar";
 import { categoriesData } from '@/data/categories';
 import { mockUserLocalSto } from '@/lib/auth';
 import { getCartItemCount } from "@/data/cartItems";
-
-
-import  NewReview from '@/components/product/comment-form'
 import { ProductCard } from '@/components/ui/ProductCards';
-
-//import { useSearchParams } from 'next/navigation';
-//import { fetchProductReviews } from '@/app/lib/actions';
- 
-// export const metadata: Metadata = {
-//   title: 'Product page',
-// };
 
 export default function Page() {
    const categories = categoriesData.filter(category => category.isActive);
@@ -56,7 +44,7 @@ export default function Page() {
 
         <main>
           <div className='product-grid'>
-            {productCard.map((index) => (
+            {productCard.map((product, index) => (
               <div className='product' key={index}>
                 <ProductCard/>
               </div>
