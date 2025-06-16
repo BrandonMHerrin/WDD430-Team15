@@ -92,6 +92,10 @@
   color: green;
 }
 
+.error {
+  color: var(--artisan-terracotta);
+}
+
 .reviews_container, .new-review-container {
  margin:1rem 4rem;
  max-width: 60svw;

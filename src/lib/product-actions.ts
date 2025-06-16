@@ -8,9 +8,9 @@ const ProductReviewSchema = z.object({
     id: z.number(),
     title: z.string(),
     reviewText: z.string(),
-    rating: z.number(),
-    productId: z.number(),
-    userId: z.number(),
+    rating: z.coerce.number(),
+    productId: z.coerce.number(),
+    userId: z.coerce.number(),
 
 })
 const CreateReviews = ProductReviewSchema.omit({id:true})
@@ -87,9 +87,9 @@ export type NewReviewState = {
     errors?: {
         title?: string[];
         reviewText?: string[];
-        rating?: number[];
-        productId?: number[];
-        userId?: number[]
+        rating?: string[];
+        productId?: string[];
+        userId?: string[]
     };
     message?: string | null;
     success?: boolean;

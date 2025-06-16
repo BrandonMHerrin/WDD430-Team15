@@ -13,7 +13,8 @@ export default function NewReview({productId}: {productId:number}) {
     const product = productId;
     const initialState: NewReviewState = {
         errors: {},
-        message: null
+        message: null,
+        success: false
     }
      const [state, formAction] = useActionState(createReview, initialState);
 
@@ -32,7 +33,7 @@ export default function NewReview({productId}: {productId:number}) {
                     id="userId"
                     type="hidden"
                     readOnly={true}
-                    value="User name"
+                    value={1}
                   
                     />
                     <RateProduct/>
@@ -44,11 +45,15 @@ export default function NewReview({productId}: {productId:number}) {
                     />
                     <textarea name="review-text" placeholder="Leave your opinion on the product" ></textarea>
                 </div>
+                <div id="customer-error" aria-live="polite" aria-atomic="true">
+                  {state.errors?.productId &&
+                  state.errors.productId.map((error: string) => (
+                  <p className="error" key={error}>
+                  {error}
+                  </p>
+                ))}
+          </div>
             <div className="review-bts">
-                {/* <Link 
-                href={`product/${productId}`}>
-                    Cancel
-                </Link> */}
                 <Button type="submit">Send Review</Button>
             </div>
             </div>
