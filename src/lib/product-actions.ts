@@ -1,14 +1,26 @@
 'use server';
 import prisma from "./prisma-client";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
+import { redirect } from 'next/navigation';
 
+const ProductReviewSchema = z.object({
+    id: z.number(),
+    title: z.string(),
+    reviewText: z.string(),
+    rating: z.number(),
+    productId: z.number(),
+    userId: z.number(),
+
+})
+const CreateReviews = ProductReviewSchema.omit({id:true})
 
 export async function getAllProducts() {
     try {
        const products = await prisma.product.findMany()
         return products
     } catch (error) {
-        return error && "Failed to get products";
+        return { message: "Failed to get products"};
     }
     
 }
@@ -20,7 +32,7 @@ export async function getProductbyId(id:number) {
         }})
         return product
     } catch (error) {
-        return error && "Failed to get product";
+        return { message: "Failed to get product"};
     }
     
 }
@@ -30,7 +42,7 @@ export async function getAllProductImages() {
         const images = prisma.productImage.findMany()
         return images
     } catch (error) {
-        return error && "Failed to get image";
+        return { message: "Failed to get images"};
     }
 }
 export async function getProductImagebyId(id:number) {
@@ -41,7 +53,7 @@ export async function getProductImagebyId(id:number) {
         }})
         return image
     } catch (error) {
-        return error && "Failed to get image";
+        return { message: "Failed to get image"};
     }
 }
 
@@ -52,9 +64,10 @@ export async function getAllProductReviews() {
         return reviews
 
     } catch (error) {
-        return error && "Failed to get review";
+        return { message: "Failed to get reviews"};
     }
 }
+
 export async function getProductReviewsbyId(id:number) {
     try{
         const review = prisma.productReview.findMany({
@@ -66,27 +79,77 @@ export async function getProductReviewsbyId(id:number) {
         return review
 
     } catch (error) {
-        return error && "Failed to get review";
+        return { message: "Failed to get review"};
     }
 }
-// export async function createReview(
-//     title:string, 
-//     reviewText:string, 
-//     productId:number, 
-//     userId:number
-//     ) {
-//     try{
+
+export type NewReviewState = {
+    errors?: {
+        title?: string[];
+        reviewText?: string[];
+        rating?: number[];
+        productId?: number[];
+        userId?: number[]
+    };
+    message?: string | null;
+    success?: boolean;
+}
+
+export async function createReview(
+    prevState: NewReviewState | undefined,
+    formData: FormData) {
+        console.log("creating Review")
+        const validatedFields = CreateReviews.safeParse({
+            title : formData.get('title'),
+            reviewText : formData.get('review-text'),
+            rating: formData.get('rating'),
+            productId : formData.get('productId'),
+            userId : formData.get('userId'),
+        })
+
+        if (!validatedFields.success) {
+        console.error('Failed to validate input data.')
+        return {
+          errors: validatedFields.error.flatten().fieldErrors,
+          message: "Missing Fields. Failed to Create Review",
+          success: false
+            };
+        }
+
+        const { title, reviewText, rating, productId, userId } = validatedFields.data;
+
+    try{
         
-//        const review = prisma.productReview.create({
-//         data: {
-//             title: title,
-//             reviewText:reviewText,
-//             productId:productId,
-//             userId:userId
-//       },
-//     });
-//     } catch (error) {
-//         return error && "Failed to create review";
-//     }
-//     }
+       const result = prisma.productReview.create({
+        data: {
+            title,
+            reviewText,
+            rating,
+            productId,
+            userId,
+            
+            },
+        });
+        if (!result) {
+          return {
+            errors: {},
+            message: 'Failed to create review.',
+            success: false
+          }
+        }
+        console.log('Successfully created review.')
+        revalidatePath("/product/{id}");
+        redirect('/product/{id}');
+        
+    } catch (error) {
+         console.error(`Review creation error: ${error}`);
+         
+        return {
+          errors: {},
+          message: "Database error. Please try again.",
+          success: false
+    };
+    
+    }
+    }
 

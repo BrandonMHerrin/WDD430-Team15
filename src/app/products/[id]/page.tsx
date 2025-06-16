@@ -14,7 +14,10 @@ import {
   getProductImagebyId,
   getProductReviewsbyId } from '@/lib/product-actions';
 import { productsData, productImagesData, productReviewData} from '@/data/products';
- 
+import { notFound } from 'next/navigation';
+
+
+
 export const metadata: Metadata = {
   title: 'Product',
 };
@@ -27,8 +30,8 @@ export default async function ProductPage({ params }:{
     /*
     *Uncomment when database is ready
     */
-    //const productId = (await params).id;
-    //const product = await getProductbyId(productId);
+    // const productId = (await params).id;
+    // const product = await getProductbyId(productId);
     // const productImage = await getProductImagebyId(productId);
     // const productReviews = await getProductReviewsbyId(productId);
 
@@ -36,8 +39,18 @@ export default async function ProductPage({ params }:{
     const productImage = productImagesData[0];
     const productReviews = productReviewData[0];
 
+    if (!product) {
+    notFound();
+    }
+
     //console.log(product1)
 
+    const handleAddToCart = (product: object, quantity: number) =>{
+      const cart = localStorage.getItem("cart-section") || [];
+      
+
+      }
+    
   return (
   <div className="page-layout">
     <Navbar/>  
@@ -71,11 +84,17 @@ export default async function ProductPage({ params }:{
               <div className='stars'>{<Star rate={productReviews.rating}/>}</div>
               <p>{product.description}</p>
               <p className='status'>In Stock</p>
-              <label htmlFor='Quantity'>Quantity  </label>
-              <select name='Quantity' defaultValue={1}>{[...Array(10)].map((_, i) => i + 1)
-                        .map(i => <option key={i} value={i}>{i}</option>)}</select>
+             
+                <label htmlFor='Quantity'>Quantity  </label>
+                <select name='Quantity' defaultValue={1}>{
+              [...Array(10)].map((_, i) => i + 1)
+                        .map(i => <option key={i} value={i}>{i}</option>)}
+                </select>
+              <Button className='add-cart' >Add to Cart</Button>
               <Button className='btn'>Buy Now</Button>
-              <Button className='add-cart'>Add to Cart</Button>
+              
+              
+              
             </div>
             </div>
           
