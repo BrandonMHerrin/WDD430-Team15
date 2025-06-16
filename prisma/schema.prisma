@@ -7,20 +7,21 @@ generator client {
 }
 
 model User {
-  id              Int     @id @default(autoincrement())
-  email           String  @unique @db.VarChar(255)
-  password        String @db.VarChar(255)
-  firstName       String @db.VarChar(155)
-  lastName        String @db.VarChar(155)
+  id              Int      @id @default(autoincrement())
+  email           String   @unique @db.VarChar(255)
+  password        String   @db.VarChar(255)
+  firstName       String   @db.VarChar(155)
+  lastName        String   @db.VarChar(155)
   lastSignIn      DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  stores Store[]
-  cart Cart?
-  orders Order[]
-  productReviews ProductReview[]
+  image           String?  @db.VarChar(2048) // image profile
+  phone           String?  @db.VarChar(20)  // Phone
+  bio             String?  @db.VarChar(1000) // Bio
+  stores          Store[]
+  cart            Cart?
+  orders          Order[]
+  productReviews  ProductReview[]
 }
+
 
 model Store {
   id Int @id @default(autoincrement())

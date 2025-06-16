@@ -1,7 +1,7 @@
-'use client'; 
+'use client';
 
-import React, { useState, ChangeEvent } from 'react';
-import { useRouter } from 'next/navigation'; 
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface SellerProfileProps {
   name: string;
@@ -13,42 +13,54 @@ interface SellerProfileProps {
 }
 
 const SellerProfile: React.FC<SellerProfileProps> = ({ name, role, email, phone, bio, avatarUrl }) => {
-  const router = useRouter(); 
+  const router = useRouter();
 
   const [image, setImage] = useState<string>(avatarUrl);
   const [editablePhone, setEditablePhone] = useState<string>(phone);
   const [editableBio, setEditableBio] = useState<string>(bio);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [imageUrlInput, setImageUrlInput] = useState<string>(avatarUrl);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          setImage(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageUrlInput(e.target.value);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const updatedData = {
-      avatarUrl: image,
+      email, // se usa para identificar al usuario en backend
+      avatarUrl: imageUrlInput,
       phone: editablePhone,
       bio: editableBio,
     };
-    console.log('Changes Saved:', updatedData);
-    alert('Changes Saved Correctly.');
-    setIsEditing(false);
+
+    try {
+      const res = await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        alert('Changes saved correctly!');
+        setImage(imageUrlInput);
+        setIsEditing(false);
+      } else {
+        alert('There was a problem saving the data.');
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      alert('Error saving data');
+    }
   };
 
   const handleGoToCart = () => {
-    router.push('/cart'); // ✅ Redirige a la página del carrito
+    router.push('/cart');
   };
 
-  
   const handleGoHome = () => {
     router.push('/');
   };
@@ -57,22 +69,24 @@ const SellerProfile: React.FC<SellerProfileProps> = ({ name, role, email, phone,
     <>
       <div className="profile-header">
         <label
-          htmlFor="profile-image-input"
+          htmlFor="profile-image-url"
           className="profile-image-label"
           title="Change Profile Photo"
-          style={{ cursor: isEditing ? 'pointer' : 'default' }}
+          style={{ cursor: isEditing ? 'text' : 'default' }}
         >
-          <img src={image} className="profile-image"/>
-          {isEditing && (
-            <input
-              id="profile-image-input"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="profile-image-input"
-            />
-          )}
+          <img src={image} alt="Profile" className="profile-image" />
         </label>
+
+        {isEditing && (
+          <input
+            id="profile-image-url"
+            type="text"
+            placeholder="Enter image URL"
+            value={imageUrlInput}
+            onChange={handleImageUrlChange}
+            className="profile-image-url-input"
+          />
+        )}
 
         <div className="profile-details">
           <div className="profile-name" title={name}>{name}</div>
@@ -81,16 +95,14 @@ const SellerProfile: React.FC<SellerProfileProps> = ({ name, role, email, phone,
       </div>
 
       <div className="profile-contact-info">
-        <div>
-          <strong>Email: </strong> {email}
-        </div>
+        <div><strong>Email: </strong> {email}</div>
         {isEditing ? (
           <input
             type="tel"
             value={editablePhone}
             onChange={(e) => setEditablePhone(e.target.value)}
             className="profile-phone-input"
-            placeholder="Teléfono"
+            placeholder="Phone"
           />
         ) : (
           <div><strong>Phone: </strong> {editablePhone}</div>
@@ -102,11 +114,11 @@ const SellerProfile: React.FC<SellerProfileProps> = ({ name, role, email, phone,
           className="profile-textarea profile-bio"
           value={editableBio}
           onChange={(e) => setEditableBio(e.target.value)}
-          placeholder="Biografía"
+          placeholder="Store History"
           rows={4}
         />
       ) : (
-        <div className="profile-bio">{editableBio}</div>
+        <div><strong>History: </strong> {editableBio}</div>
       )}
 
       <div className="profile-buttons">
