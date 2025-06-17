@@ -5,10 +5,24 @@ import { Category } from "@/types/category";
 import { Prisma } from "@prisma/client";
 import { auth } from "auth";
 import { SessionProvider } from "next-auth/react";
+import { ReactNode } from 'react';
+
+
+
+const mockCategories = [
+  { id: 1, name: 'Handmade Crafts', isActive: true },
+  { id: 2, name: 'Jewelry', isActive: true },
+  { id: 3, name: 'Home Decor', isActive: true },
+  { id: 4, name: 'Clothing', isActive: true },
+  { id: 5, name: 'Art', isActive: true },
+];
+
 
 export default async function MainLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+ children 
+}: { 
+  children: ReactNode 
+}) {
   const session = await auth();
 
   const categories: Category[] = await prisma.category.findMany({
@@ -34,7 +48,6 @@ export default async function MainLayout({
 
   const handleCategorySelect = (categoryId: string) => {
     console.log("Selected category:", categoryId);
-    // Still missing, add later on here: filtering logic
   };
 
   return (

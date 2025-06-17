@@ -1,5 +1,7 @@
 
 import { User } from '../types/cart';
+import { mockCartItems, createMockCart } from '../data/cartItems';
+
 
 // Mock user 
 export const mockUser: User = {
@@ -25,6 +27,19 @@ export const mockUser: User = {
 */
 export const mockUserLocalSto = (): void => {
   if (typeof window !== 'undefined') {
+     const existingAuth = localStorage.getItem('authData');
+
+     if (existingAuth) {
+      try {
+        const parsedAuth = JSON.parse(existingAuth);
+        if (parsedAuth.user && isValidSession(parsedAuth.loginTimestamp)) {
+          return; 
+        }
+      } catch (error) {
+        console.error('Error parsing existing auth data:', error);
+      }
+    }
+
     const loginData = {
       user: mockUser,
       loginTimestamp: Date.now()
@@ -38,6 +53,13 @@ export const mockUserLocalSto = (): void => {
  and session hasn't expired (giving 8 days max), it
  returns true 
  */
+const isValidSession = (loginTimestamp: number): boolean => {
+  const now = Date.now();
+  const eightDaysInMs = 8 * 24 * 60 * 60 * 1000; 
+  return (now - loginTimestamp) < eightDaysInMs;
+};
+
+
 export const isAuthenticated = (): boolean => {
   if (typeof window === 'undefined') return false;
   
@@ -46,10 +68,8 @@ export const isAuthenticated = (): boolean => {
     if (!authData) return false;
     
     const { loginTimestamp } = JSON.parse(authData);
-    const now = Date.now();
-    const eightDaysInMs = 8 * 24 * 60 * 60 * 1000; // 8 days
-    
-    return (now - loginTimestamp) < eightDaysInMs;
+        
+    return isValidSession(loginTimestamp);
   } catch {
     return false;
   }
@@ -90,5 +110,27 @@ export const updateUserData = (updatedUser: User): void => {
     localStorage.setItem('authData', JSON.stringify(currentAuthData));
   } catch (error) {
     console.error('Failed to update user data:', error);
+  }
+};
+
+
+export const logout = (): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('authData');
+  }
+};
+
+
+/* Just to populate cart with samlpe data */
+export const initializeWithMockCart = (): void => {
+  if (typeof window === 'undefined') return;
+  
+  const currentUser = getCurrentUser();
+  if (currentUser) {
+    const updatedUser: User = {
+      ...currentUser,
+      cart: createMockCart(mockCartItems)
+    };
+    updateUserData(updatedUser);
   }
 };
