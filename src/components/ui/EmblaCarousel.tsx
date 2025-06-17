@@ -1,6 +1,6 @@
 //example API=> https://codesandbox.io/p/sandbox/pp4c69?file=%2Fsrc%2Fjs%2Findex.tsx%3A4%2C11
-"use client";
-import React, { useCallback } from 'react'
+
+import React, { Suspense, useCallback } from 'react'
 import { EmblaOptionsType, EmblaCarouselType } from 'embla-carousel'
 import {
   PrevButton,
@@ -11,6 +11,8 @@ import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
 import  styles  from "./embla.module.css"
 import { ProductCard } from "./ProductCards";
+import { 
+  getAllProducts} from '@/lib/product-actions';
 
 type PropType = {
   slides: number[]
@@ -40,6 +42,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
     onNextButtonClick
   } = usePrevNextButtons(emblaApi, onNavButtonClick)
 
+  const products = getAllProducts()
   return (
     <section className={styles.embla}>
       <div className={styles.embla__viewport} ref={emblaRef}>
@@ -48,7 +51,9 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
             <div className={styles.embla__slide} key={index}>
               
               <div className={styles.embla__slide__number}>
-                <ProductCard/>
+               <Suspense fallback={<div>Loading ...</div>}>
+                <ProductCard products={products}/>
+               </Suspense>
                 
               </div>
               

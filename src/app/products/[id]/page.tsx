@@ -1,11 +1,7 @@
 import prisma from "@/lib/prisma-client";
 import { Metadata } from 'next';
 import Image from 'next/image';
-import Navbar from "@/components/navbar";
-import Toolbar from "@/components/toolbar";
-//import { categoriesData } from '@/data/categories';
-import { mockUserLocalSto } from '@/lib/auth';
-import { getCartItemCount } from "@/data/cartItems";
+import MainLayout from "@/app/(main)/layout";
 import { Button } from '@/components/button';
 import { Star } from '@/components/Stars';
 import { User } from 'lucide-react';
@@ -115,10 +111,9 @@ export default async function ProductPage({ params }:{
       }
     
   return (
-  <div className="page-layout">
-    <Navbar/>  
+    <MainLayout>
 
-    <main>
+  <div className="page-layout">
       <div className='product-page'>
         <div className="product-description">
           <div className='imgs-thbn'>
@@ -136,7 +131,7 @@ export default async function ProductPage({ params }:{
                   width={600}
                   height={400}
                   priority
-              
+                  
                 />
           </div>
         
@@ -165,7 +160,7 @@ export default async function ProductPage({ params }:{
           <div className="reviews_container">
             <h3>Top Reviews of this product</h3>
                 {productReviews?.map((review)=>(
-                <div className='review' key={review.id}>
+                  <div className='review' key={review.id}>
                   <div className='user-info'>
                     <User size={30}/> 
                     <p>user {review.userId}</p>
@@ -176,30 +171,17 @@ export default async function ProductPage({ params }:{
                     <p className='review-text'>{review.reviewText}</p>
                 </div>
                 ))
-                }
+              }
                 <div><p>There are no reviews about this product yet.</p></div>
     
-                {/* {productReviewData.map((productReviews, index)=>{
-                  return (
-                    <div className='review' key={index}>
-                  <div className='user-info'>
-                    <User size={30}/> 
-                    <p>user {productReviews.userId}</p>
-                    
-                  </div>
-                    <h4>{<Star rate={productReviews.rating}/>} {productReviews.title}</h4>
-                    <p className='date'>{productReviews.createdAt.toDateString()}</p>
-                    <p className='review-text'>{productReviews.reviewText}</p>
-                </div>
-                  )
-                })} */}
           </div>
           {/* Only if session is started. getSession() */}
           <div className="new-comments">
             <NewReview productId={productId}/>
           </div>
         </div>
-      </main>
-  </div>
+      
+      </div>
+    </MainLayout>
   );
 }

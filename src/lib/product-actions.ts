@@ -18,7 +18,7 @@ const CreateReviews = ProductReviewSchema.omit({id:true})
 export async function getAllProducts() {
     try {
        const products = await prisma.product.findMany()
-       console.log(products)
+       //console.log(products)
         return JSON.stringify(products)
     } catch (error) {
         return { message: "Failed to get products"};
