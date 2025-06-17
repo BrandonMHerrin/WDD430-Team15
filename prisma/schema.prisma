@@ -7,21 +7,23 @@ generator client {
 }
 
 model User {
-  id              Int      @id @default(autoincrement())
-  email           String   @unique @db.VarChar(255)
-  password        String   @db.VarChar(255)
-  firstName       String   @db.VarChar(155)
-  lastName        String   @db.VarChar(155)
+  id              Int     @id @default(autoincrement())
+  email           String  @unique @db.VarChar(255)
+  password        String @db.VarChar(255)
+  firstName       String @db.VarChar(155)
+  lastName        String @db.VarChar(155)
   lastSignIn      DateTime?
   image           String?  @db.VarChar(2048) // image profile
   phone           String?  @db.VarChar(20)  // Phone
   bio             String?  @db.VarChar(1000) // Bio
-  stores          Store[]
-  cart            Cart?
-  orders          Order[]
-  productReviews  ProductReview[]
-}
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
+  stores Store[]
+  cart Cart?
+  orders Order[]
+  productReviews ProductReview[]
+}
 
 model Store {
   id Int @id @default(autoincrement())
@@ -42,10 +44,12 @@ model Product {
   description String @db.Text
   price Decimal @db.Decimal(10,2)
   storeId Int
+  categoryId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   store Store @relation(fields: [storeId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
   productImages ProductImage[]
   productReviews ProductReview[]
   cartItems CartItem[]
@@ -56,6 +60,7 @@ model ProductReview {
   id Int @id @default(autoincrement())
   title String @db.VarChar(255)
   reviewText String @db.Text
+  rating Int
   productId Int
   userId Int
   createdAt DateTime @default(now())
@@ -63,30 +68,6 @@ model ProductReview {
 
   product Product @relation(fields: [productId], references: [id])
   user User @relation(fields: [userId], references: [id])
-}
-
-model ProductImage {
-  productId Int 
-  imageUrl String 
-  width Int @db.Integer
-  height Int @db.Integer
-  fileType FileType
-
-  product Product @relation(fields: [productId], references: [id])
-
-  @@id([productId, imageUrl])
-}
-
-model StoreImage {
-  storeId Int
-  imageUrl String
-  width Int
-  height Int
-  fileType FileType
-
-  store Store @relation(fields: [storeId], references: [id])
-
-  @@id([storeId, imageUrl])
 }
 
 model Cart {
@@ -151,10 +132,54 @@ model Address {
   orders Order[]
 }
 
+model Category {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(255)
+  description String? @db.Text
+  imageUrl String?
+  isActive Boolean
+  sortOrder Int
+  parentCategoryId Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent Category? @relation("ParentChild", fields: [parentCategoryId], references: [id])
+  children Category[] @relation("ParentChild")
+  products Product[]
+}
+
+model ProductImage {
+  id Int @id @default(autoincrement())
+  imageUrl String @db.VarChar(255)
+  productId Int
+  sortOrder Int
+  fileType FileType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model StoreImage {
+  id Int @id @default(autoincrement())
+  imageUrl String @db.VarChar(255)
+  storeId Int
+  sortOrder Int
+  fileType FileType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id])
+}
+
 enum FileType {
+  jpeg
   JPEG
+  jpg
   JPG
+  png
   PNG
+  webp
   WEBP
 }
 
