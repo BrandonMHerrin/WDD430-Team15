@@ -18,18 +18,26 @@ const CreateReviews = ProductReviewSchema.omit({id:true})
 export async function getAllProducts() {
     try {
        const products = await prisma.product.findMany()
-        return products
+       console.log(products)
+        return JSON.stringify(products)
     } catch (error) {
         return { message: "Failed to get products"};
     }
     
 }
-export async function getProductbyId(id:number) {
+export async function getProductbyId(productId:number) {
     try {
        const product = await prisma.product.findUnique({
             where:{ 
-                id:id
-        }})
+                id:productId
+            },
+            select: {
+                name: true,
+                description: true,
+                price: true
+            }
+        })
+        // console.log(product)
         return product
     } catch (error) {
         return { message: "Failed to get product"};

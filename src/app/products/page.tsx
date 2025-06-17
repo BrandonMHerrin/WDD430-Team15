@@ -7,7 +7,7 @@ import { getCartItemCount } from "@/data/cartItems";
 import { ProductCard } from '@/components/ui/ProductCards';
 
 export default function Page() {
-  
+ //const product = await prisma.product.findMany()
     /**
      * Begins loading mock authentication while page loads
      */

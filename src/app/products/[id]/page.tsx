@@ -1,5 +1,6 @@
 'use client';
 
+import prisma from "@/lib/prisma-client";
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -60,6 +61,10 @@ export default function ProductPage({ params }: ProductPageProps) {
 
   if (!product) {
     notFound();
+    }  
+    if (!productReviews) {
+      return <div><p>There are no reviews about this product yet.</p></div>
+    }
   }
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -236,8 +241,9 @@ export default function ProductPage({ params }: ProductPageProps) {
                   <p className={styles.date}>{productReview.createdAt.toDateString()}</p>
                   <p className={styles.reviewText}>{productReview.reviewText}</p>
                 </div>
-              )
-            })}
+                  )
+                })}
+                
           </div>
 
           {/* Only if session is started */}

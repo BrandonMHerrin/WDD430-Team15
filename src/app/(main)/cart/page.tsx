@@ -202,18 +202,6 @@ export default function CartPage() {
   if (cartItems.length === 0 && !showSuccessModal) {
     return (
       <div className="page-layout">
-        {/* <Navbar 
-          cartItemCount={0}
-          isLoggedIn={true}
-          userName="John"
-          categories={categories}
-          onCategorySelect={handleCategorySelect}
-        />
-        <Toolbar 
-          categories={categories}
-          onCategorySelect={handleCategorySelect}
-          isMobile={false}
-        /> */}
 
         <div className="cart-page">
           <div className="empty-cart">
