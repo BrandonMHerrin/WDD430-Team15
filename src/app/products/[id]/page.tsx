@@ -1,6 +1,5 @@
 'use client';
 
-import prisma from "@/lib/prisma-client";
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -13,7 +12,7 @@ import { getCartItemCount } from "@/data/cartItems";
 import { Button } from '@/components/button';
 import { Star } from '@/components/Stars';
 import { User, ShoppingCart, CheckCircle, AlertCircle } from 'lucide-react';
-import  NewReview from '@/components/product/comment-form';
+import NewReview from '@/components/product/comment-form';
 import { 
   getProductbyId, 
   getProductImagebyId,
@@ -22,8 +21,6 @@ import { productsData, productImagesData, productReviewData} from '@/data/produc
 import { addToCart } from '@/lib/cart-actions';
 import { notFound } from 'next/navigation';
 import styles from './ProductPage.module.css';
-
-
 
 interface ProductPageProps {
   params: Promise<{
@@ -35,7 +32,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   const router = useRouter();
   const [product, setProduct] = useState(productsData[0]);
   const [productImage, setProductImage] = useState(productImagesData[0]);
-  const [productReviews, setProductReviews] = useState(productReviewData[0]); //Added a [0] because it was not finding the nested object without it,
+  const [productReviews, setProductReviews] = useState(productReviewData[0]); // Added a [0] because it was not finding the nested object without it
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [notification, setNotification] = useState<{
@@ -44,27 +41,23 @@ export default function ProductPage({ params }: ProductPageProps) {
   }>({ type: null, message: '' });
 
   useEffect(() => {
-    
     mockUserLocalSto();
   }, []);
 
-        // notification 
-        useEffect(() => {
-          if (notification.type) {
-            const timer = setTimeout(() => {
-              setNotification({ type: null, message: '' });
-            }, 3000); 
-            return () => clearTimeout(timer);
-          }
-        }, [notification]);
+  // notification auto-hide
+  useEffect(() => {
+    if (notification.type) {
+      const timer = setTimeout(() => {
+        setNotification({ type: null, message: '' });
+      }, 3000); 
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
-
+  // Early returns should be at the top level, not nested
   if (!product) {
     notFound();
-    }  
-    if (!productReviews) {
-      return <div><p>There are no reviews about this product yet.</p></div>
-    }
+    return null; // This ensures we don't continue execution
   }
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -87,7 +80,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         product, 
         productImage, 
         quantity,
-        'Artisan Store' //Connect to Brandom databse to have it dynamically
+        'Artisan Store' // Connect to Brandon database to have it dynamically
       );
 
       if (result.success) {
@@ -116,8 +109,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
   const handleBuyNow = () => {
     handleAddToCart();
-
-    // backc to cart
+    // Navigate to cart after adding
     setTimeout(() => {
       router.push('/cart');
     }, 1000);
@@ -127,9 +119,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     router.push('/cart');
   };
 
-
-
-   return (
+  return (
     <div className="page-layout">
       <Navbar/>  
 
@@ -183,7 +173,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               <h3>{product.name}</h3>
               <p className={styles.price}>${product.price}</p>
               <div className="stars">
-                <Star rate={productReviews.rating || 5}/>
+                <Star rate={productReviews?.rating || 5}/>
               </div>
               <p>{product.description}</p>
               <p className={styles.status}>In Stock</p>
@@ -228,8 +218,8 @@ export default function ProductPage({ params }: ProductPageProps) {
           {/* Reviews and comments */}
           <div className={styles.reviewsContainer}>
             <h3>Top Reviews of this product</h3>
-            {productReviewData.map((productReview, index) => {
-              return (
+            {productReviewData && productReviewData.length > 0 ? (
+              productReviewData.map((productReview, index) => (
                 <div className={styles.review} key={index}>
                   <div className={styles.userInfo}>
                     <User size={30}/> 
@@ -241,9 +231,10 @@ export default function ProductPage({ params }: ProductPageProps) {
                   <p className={styles.date}>{productReview.createdAt.toDateString()}</p>
                   <p className={styles.reviewText}>{productReview.reviewText}</p>
                 </div>
-                  )
-                })}
-                
+              ))
+            ) : (
+              <div><p>There are no reviews about this product yet.</p></div>
+            )}
           </div>
 
           {/* Only if session is started */}
