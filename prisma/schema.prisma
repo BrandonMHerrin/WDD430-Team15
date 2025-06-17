@@ -1,196 +1,185 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_PRISMA_URL")
-}
 generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id              Int     @id @default(autoincrement())
-  email           String  @unique @db.VarChar(255)
-  password        String @db.VarChar(255)
-  firstName       String @db.VarChar(155)
-  lastName        String @db.VarChar(155)
-  lastSignIn      DateTime?
-  image           String?  @db.VarChar(2048) // image profile
-  phone           String?  @db.VarChar(20)  // Phone
-  bio             String?  @db.VarChar(1000) // Bio
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
 
-  stores Store[]
-  cart Cart?
-  orders Order[]
+model User {
+  id             Int             @id @default(autoincrement())
+  email          String          @unique @db.VarChar(255)
+  password       String          @db.VarChar(255)
+  firstName      String          @db.VarChar(155)
+  lastName       String          @db.VarChar(155)
+  lastSignIn     DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  bio            String?         @db.VarChar(1000)
+  image          String?         @db.VarChar(2048)
+  phone          String?         @db.VarChar(20)
+  cart           Cart?
+  orders         Order[]
   productReviews ProductReview[]
+  stores         Store[]
 }
 
 model Store {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
-  description String @db.Text
-  ownerId Int
-  createdAt DateTime @default(now())
-  modifiedAt DateTime @updatedAt
-
-  products Product[]
+  id          Int          @id @default(autoincrement())
+  name        String       @db.VarChar(255)
+  description String
+  ownerId     Int
+  createdAt   DateTime     @default(now())
+  modifiedAt  DateTime     @updatedAt
+  products    Product[]
+  owner       User         @relation(fields: [ownerId], references: [id])
   storeImages StoreImage[]
-  owner User @relation(fields: [ownerId], references: [id])
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
-  name        String @db.VarChar(255)
-  description String @db.Text
-  price Decimal @db.Decimal(10,2)
-  storeId Int
-  categoryId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  store Store @relation(fields: [storeId], references: [id])
-  category Category @relation(fields: [categoryId], references: [id])
-  productImages ProductImage[]
+  id             Int             @id @default(autoincrement())
+  name           String          @db.VarChar(255)
+  description    String
+  storeId        Int
+  createdAt      DateTime        @default(now())
+  price          Decimal         @db.Decimal(10, 2)
+  updatedAt      DateTime        @updatedAt
+  categoryId     Int
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
+  category       Category        @relation(fields: [categoryId], references: [id])
+  store          Store           @relation(fields: [storeId], references: [id])
+  productImages  ProductImage[]
   productReviews ProductReview[]
-  cartItems CartItem[]
-  orderItems OrderItem[]
 }
 
 model ProductReview {
-  id Int @id @default(autoincrement())
-  title String @db.VarChar(255)
-  reviewText String @db.Text
-  rating Int
-  productId Int
-  userId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  product Product @relation(fields: [productId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  id         Int      @id @default(autoincrement())
+  title      String   @db.VarChar(255)
+  reviewText String
+  productId  Int
+  userId     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  rating     Int
+  product    Product  @relation(fields: [productId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model Cart {
-  id Int @id @default(autoincrement())
-  total Decimal @db.Decimal(10,2)
-  userId Int? @unique
-
-  user User? @relation(fields: [userId], references: [id])
+  id        Int        @id @default(autoincrement())
+  total     Decimal    @db.Decimal(10, 2)
+  userId    Int?       @unique
+  user      User?      @relation(fields: [userId], references: [id])
   cartItems CartItem[]
 }
 
 model CartItem {
-  id Int @id @default(autoincrement())
-  cartId Int
+  id        Int     @id @default(autoincrement())
+  cartId    Int
   productId Int
-  price Decimal @db.Decimal(10,2)
-  quantity Int
-  total Decimal @db.Decimal(10,2)
-
-  cart Cart @relation(fields: [cartId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  price     Decimal @db.Decimal(10, 2)
+  quantity  Int
+  total     Decimal @db.Decimal(10, 2)
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Order {
-  id Int @id @default(autoincrement())
-  total Decimal @db.Decimal(10,2)
-  userId Int
+  id                Int         @id @default(autoincrement())
+  total             Decimal     @db.Decimal(10, 2)
+  userId            Int
   shippingAddressId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
-  shippingAddress Address @relation(fields: [shippingAddressId], references: [id])
-  orderItems OrderItem[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  shippingAddress   Address     @relation(fields: [shippingAddressId], references: [id])
+  user              User        @relation(fields: [userId], references: [id])
+  orderItems        OrderItem[]
 }
 
 model OrderItem {
-  id Int @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   orderStatus OrderStatus
-  orderId Int
-  productId Int
-  price Decimal @db.Decimal(10,2)
-  quantity Int 
-  total Decimal @db.Decimal(10,2)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  order Order @relation(fields: [orderId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  orderId     Int
+  productId   Int
+  price       Decimal     @db.Decimal(10, 2)
+  quantity    Int
+  total       Decimal     @db.Decimal(10, 2)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  order       Order       @relation(fields: [orderId], references: [id])
+  product     Product     @relation(fields: [productId], references: [id])
 }
 
 model Address {
-  id Int @id @default(autoincrement())
-  street1 String @db.VarChar(255)
-  street2 String @db.VarChar(255)
-  city String @db.VarChar(255)
-  state String @db.VarChar(255)
-  country String @db.VarChar(255)
+  id        Int      @id @default(autoincrement())
+  street1   String   @db.VarChar(255)
+  street2   String   @db.VarChar(255)
+  city      String   @db.VarChar(255)
+  state     String   @db.VarChar(255)
+  country   String   @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  orders Order[]
+  orders    Order[]
 }
 
 model Category {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
-  description String? @db.Text
-  imageUrl String?
-  isActive Boolean
-  sortOrder Int
+  id               Int        @id @default(autoincrement())
+  name             String     @db.VarChar(255)
+  description      String?
+  imageUrl         String?
+  isActive         Boolean
+  sortOrder        Int
   parentCategoryId Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  parent Category? @relation("ParentChild", fields: [parentCategoryId], references: [id])
-  children Category[] @relation("ParentChild")
-  products Product[]
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  parent           Category?  @relation("ParentChild", fields: [parentCategoryId], references: [id])
+  children         Category[] @relation("ParentChild")
+  products         Product[]
 }
 
 model ProductImage {
-  id Int @id @default(autoincrement())
-  imageUrl String @db.VarChar(255)
   productId Int
-  sortOrder Int
-  fileType FileType
+  imageUrl  String   @db.VarChar(255)
+  fileType  FileType
   createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  sortOrder Int
   updatedAt DateTime @updatedAt
-
-  product Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
 }
 
 model StoreImage {
-  id Int @id @default(autoincrement())
-  imageUrl String @db.VarChar(255)
-  storeId Int
-  sortOrder Int
-  fileType FileType
+  storeId   Int
+  imageUrl  String   @db.VarChar(255)
+  fileType  FileType
   createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  sortOrder Int
   updatedAt DateTime @updatedAt
-
-  store Store @relation(fields: [storeId], references: [id])
+  store     Store    @relation(fields: [storeId], references: [id])
 }
 
 enum FileType {
-  jpeg
   JPEG
-  jpg
   JPG
-  png
   PNG
-  webp
   WEBP
+  jpeg
+  jpg
+  png
+  webp
 }
 
 enum OrderStatus {
-  PENDING_PAYMENT    // Initial state when order is created
-  PAYMENT_FAILED     // Payment attempt unsuccessful
-  PROCESSING        // Payment received, order being prepared
-  CONFIRMED         // Order confirmed and ready for shipping
-  SHIPPED           // Order has been shipped
-  DELIVERED         // Order successfully delivered
-  CANCELLED         // Order cancelled by customer or seller
-  REFUNDED          // Order refunded to customer
-  RETURNED          // Order returned by customer
+  PENDING_PAYMENT
+  PAYMENT_FAILED
+  PROCESSING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+  RETURNED
 }
