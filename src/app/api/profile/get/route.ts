@@ -7,6 +7,17 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { email },
+    include: {
+      stores: {
+        include: {
+          products: {
+            include: {
+              productImages: true,  // <- Aquí se incluyen las imágenes del producto
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!user) {
