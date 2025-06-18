@@ -28,6 +28,7 @@ export function RateProduct() {
                         name="rating" 
                         value={rateValue}
                         onClick={() =>setRating(index)}
+                        required
                         />
                         <FaStar 
                         className="rating-star" 

@@ -147,20 +147,21 @@ export async function createReview(
     prevState: NewReviewState | undefined,
     formData: FormData) {
         console.log("creating Review")
-        const validatedFields = CreateReviews.safeParse({
+        const validatedFields = CreateReviews.safeParse({       
             title : formData.get('title'),
             reviewText : formData.get('review-text'),
             rating: formData.get('rating'),
             productId : formData.get('productId'),
             userId : formData.get('userId'),
         })
+        console.log(validatedFields)
 
         if (!validatedFields.success) {
         console.error('Failed to validate input data.')
         return {
           errors: validatedFields.error.flatten().fieldErrors,
           message: "Missing Fields. Failed to Create Review",
-          success: false
+          success: false,
             };
         }
 
@@ -172,9 +173,9 @@ export async function createReview(
         data: {
             title,
             reviewText,
-            rating,
-            productId,
-            userId,
+            rating:Number(rating),
+            productId:Number(productId),
+            userId:Number(userId),
             
             },
         });
@@ -185,9 +186,15 @@ export async function createReview(
             success: false
           }
         }
+        console.log(result)
         console.log('Successfully created review.')
-        revalidatePath("/product/{id}");
-        redirect('/product/{id}');
+        revalidatePath(`/products/${productId}`);
+//        redirect('/products/');
+        return {
+            errors: {},
+            message: 'Review created successfully.',
+            success: true
+    };
         
     } catch (error) {
          console.error(`Review creation error: ${error}`);

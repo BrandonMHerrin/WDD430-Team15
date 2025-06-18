@@ -25,7 +25,7 @@ export interface Product {
   } | null;
 }
 
-export interface ProductImage {
+export interface ProductImage  {
   id: number;
   productId: number;
   imageUrl: string;
@@ -33,7 +33,9 @@ export interface ProductImage {
   fileType: string;
   createdAt?: Date;
   updatedAt?: Date;
-}
+
+  
+} 
 
 export interface ProductReview {
   id: number;

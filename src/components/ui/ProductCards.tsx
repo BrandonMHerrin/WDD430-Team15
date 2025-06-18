@@ -2,24 +2,13 @@
 import Image from "next/image";
 import styles from "./embla.module.css";
 import { useRouter } from 'next/navigation';
+import { Product } from "@/types/product";
 
+interface ProductProps {
+  product: Product
+}
 
-
-export function ProductCard ({product}:{
-  product:Promise<{
-    id: number;
-    description: string;
-    price: number;
-    name: string;
-    storeId: number;
-    categoryId: number;
-    createdAt: Date;
-    updatedAt: Date;
-    }[] | {
-    message: string;
-  }>
-  }
-  ) {
+export function ProductCard ({product}: ProductProps) {
 
    const router = useRouter();
     const gotoProduct = () => {
@@ -30,7 +19,7 @@ export function ProductCard ({product}:{
             <p className={styles.card_div_p}>{product.name}</p>
             <Image
               className={styles.onSale_img} 
-              src={`/embla-carousel/{product}`}
+              src={product.primaryImage?.imageUrl ?? '/public/placeholder.png'}
               alt="placeholder"
               width={500}
               height={300}

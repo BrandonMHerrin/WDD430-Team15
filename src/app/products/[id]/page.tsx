@@ -112,17 +112,6 @@ export default function ProductPage({ params }: ProductPageProps) {
     }
   }, [notification]);
 
-  //productsData
-  // useEffect(()=> {
-  //   getProductbyId(productId).then(data => {
-  //     if ('message' in data) {
-  //       console.error(data.message);
-  //       return; 
-  //       }
-  //     setProduct(data)
-  //   })
-  // })
-
   // Early returns should be at the top level, not nested
   if (loading) {
     return (
@@ -159,7 +148,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     }
 
     setIsAddingToCart(true);
-
+        
     try {
       const result = addToCart(
         product, 
@@ -318,7 +307,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
         
           <div className={styles.newComments}>
-            <NewReview productId={product.id}/>
+            <NewReview product={product}/>
           </div>
         </div>
       </div>
