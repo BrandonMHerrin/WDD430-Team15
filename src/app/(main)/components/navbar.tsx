@@ -93,9 +93,9 @@ const Navbar: React.FC<NavBar> = ({
           <div className="cart-section" onClick={handleCartClick}>
             <div className="cart-icon-container">
               <ShoppingCart size={20} />
-              {cartItemCount > 0 && (
+              {/* {cartItemCount > 0 && (
                 <span className="cart-badge">{cartItemCount}</span>
-              )}
+              )} */}
             </div>
             <span className="cart-text">Cart</span>
           </div>

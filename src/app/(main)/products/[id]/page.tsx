@@ -115,22 +115,22 @@ export default function ProductPage({ params }: ProductPageProps) {
   // Early returns should be at the top level, not nested
   if (loading) {
     return (
-      <ClientLayout isLoggedIn={isAuthenticated()} cartItemCount={0}>
+      // <ClientLayout isLoggedIn={isAuthenticated()} cartItemCount={0}>
+      // </ClientLayout>
         <div style={{ padding: '2rem', textAlign: 'center' }}>
           <p>Loading product...</p>
         </div>
-      </ClientLayout>
     );
   }
 
   if (!product) {
     return (
-      <ClientLayout isLoggedIn={isAuthenticated()} cartItemCount={0}>
+      // <ClientLayout isLoggedIn={isAuthenticated()} cartItemCount={0}>
+      // </ClientLayout>
         <div style={{ padding: '2rem', textAlign: 'center' }}>
           <h2>Product not found</h2>
           <p>The product you're looking for doesn't exist.</p>
         </div>
-      </ClientLayout>
     );
   }
 
@@ -152,7 +152,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     try {
       const result = addToCart(
         product, 
-        productImage, 
+        productImage as ProductImage, 
         quantity,
         'Artisan Store'
       );
@@ -192,7 +192,9 @@ export default function ProductPage({ params }: ProductPageProps) {
   };
 
   return (
-    <ClientLayout isLoggedIn={isAuthenticated()} cartItemCount={0}>
+    // <ClientLayout isLoggedIn={isAuthenticated()} cartItemCount={0}>
+    // </ClientLayout>
+    <>
       {/* Notification Banner */}
       {notification.type && (
         <div className={`${styles.notification} ${styles[notification.type]}`}>
@@ -311,6 +313,6 @@ export default function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
-    </ClientLayout>
+    </>
   );
 }
