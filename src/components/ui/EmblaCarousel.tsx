@@ -11,17 +11,46 @@ import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
 import  styles  from "./embla.module.css"
 import { ProductCard } from "./ProductCards";
-import { 
+/* import { 
   getAllProducts} from '@/lib/product-actions';
-import {use} from 'react';
+import {use} from 'react'; */
+
+
+// Copy of oroduct interface
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  storeId: number;
+  categoryId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  store?: {
+    id: number;
+    name: string;
+  };
+  category?: {
+    id: number;
+    name: string;
+  };
+  primaryImage?: {
+    id: number;
+    productId: number;
+    imageUrl: string;
+    sortOrder: number;
+    fileType: string;
+  } | null;
+}
 
 type PropType = {
   slides: number[]
-  options?: EmblaOptionsType
+  options?: EmblaOptionsType,
+  products: Product[]
 }
 
 const EmblaCarousel: React.FC<PropType> = (props) => {
-  const { slides, options } = props
+  const { slides, options, products } = props
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()])
 
   const onNavButtonClick = useCallback((emblaApi: EmblaCarouselType) => {
@@ -43,26 +72,33 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
     onNextButtonClick
   } = usePrevNextButtons(emblaApi, onNavButtonClick)
 
-  const products = use(getAllProducts())
+  /* const products = use(getAllProducts())
   if ('message' in products) {
     return <div>Error: {products.message}</div>;
-    }
+    } */
+
+  if (!products || products.length === 0) {
+    return <div>No products available</div>;
+  }
+
+
   return (
     <section className={styles.embla}>
       <div className={styles.embla__viewport} ref={emblaRef}>
         <div className={styles.embla__container}>
-          {slides.map((index) => (
-            <div className={styles.embla__slide} key={index}>
-              
-              <div className={styles.embla__slide__number}>
-               
-                <ProductCard products={products}/>
-               
-                
+          {slides.map((index) => {
+            // Get the product for this slide, cycle through Brnadom database products
+            const product = products[index % products.length];
+            
+            return (
+              <div className={styles.embla__slide} key={index}>
+                <div className={styles.embla__slide__number}>
+                  {/* Pass individual product instead of array */}
+                  <ProductCard product={product} />
+                </div>
               </div>
-              
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

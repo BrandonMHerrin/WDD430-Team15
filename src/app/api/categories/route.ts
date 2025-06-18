@@ -1,8 +1,5 @@
-//import { handlers } from "auth";
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma-client';
-
-//export const { GET, POST } = handlers;
 
 export async function GET() {
   try {

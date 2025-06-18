@@ -1,7 +1,7 @@
 import MainLayout from '../(main)/layout';
-import { getAllProducts } from '@/lib/product-actions';
 import { ProductCard } from '@/components/ui/ProductCards';
 import { Suspense } from 'react';
+import { getAllProducts } from '@/lib/product-actions'
 
 export default async function Page() {
 

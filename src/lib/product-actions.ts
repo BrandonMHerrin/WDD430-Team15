@@ -16,35 +16,70 @@ const ProductReviewSchema = z.object({
 })
 const CreateReviews = ProductReviewSchema.omit({id:true})
 
-export async function getAllProducts(): Promise<Product[] | { message: string }> {
+export async function getAllProducts(){
     try {
-       const products = await prisma.product.findMany()
+       const products = await prisma.product.findMany( {
+          include: {
+               store: {select: {id: true, name: true}  },
+               category: {select: {id: true, name: true}  },
+               productImages: { orderBy: {sortOrder: 'asc'}, take: 1}    },
+           orderBy: {createdAt: 'desc' }
+       })
     
-        return products
+        return products.map (product => ({
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            price: Number(product.price), 
+            storeId: product.storeId,
+            categoryId: product.categoryId,
+            createdAt: product.createdAt,
+            updatedAt: product.updatedAt,
+            store: product.store,
+            category: product.category,
+            primaryImage: product.productImages[0] || null
+
+        }))
     } catch (error) {
         console.error(error);
         return { message: "Failed to get products"};
     }
     
 }
-export async function getProductbyId(productId:number) {
+export async function getProductbyId(productId: number) {
     try {
        const product = await prisma.product.findUnique({
-            where:{ 
-                id:productId
+            where: { 
+                id: productId
             },
-            select: {
-                name: true,
-                description: true,
-                price: true
+            include: {
+                store: { select: { id: true, name: true } },
+                category: { select: { id: true, name: true } },
+                productImages: { orderBy: { sortOrder: 'asc' }, take: 1 }
             }
         })
-        // console.log(product)
-        return product
+        
+        if (!product) {
+            return { message: "Product not found" };
+        }
+        
+        return {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            price: Number(product.price),
+            storeId: product.storeId,
+            categoryId: product.categoryId,
+            createdAt: product.createdAt,
+            updatedAt: product.updatedAt,
+            store: product.store,
+            category: product.category,
+            primaryImage: product.productImages[0] || null
+        };
     } catch (error) {
-        return { message: "Failed to get product"};
+        console.error(error);
+        return { message: "Failed to get product" };
     }
-    
 }
 
 export async function getAllProductImages() {
@@ -55,15 +90,16 @@ export async function getAllProductImages() {
         return { message: "Failed to get images"};
     }
 }
-export async function getProductImagebyId(id:number) {
+export async function getProductImagebyId(id: number) {
     try {
-        const image = prisma.productImage.findFirst({
-            where:{ 
-                productId:(id)
-        }})
-        return image
+        const image = await prisma.productImage.findFirst({
+            where: { 
+                productId: id
+            }
+        });
+        return image;
     } catch (error) {
-        return { message: "Failed to get image"};
+        return { message: "Failed to get image" };
     }
 }
 

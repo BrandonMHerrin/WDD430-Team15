@@ -2,7 +2,7 @@
 
 import { Metadata } from 'next';
 import Image from 'next/image';
-import MainLayout from "@/app/(main)/layout";
+import ClientLayout from '@/components/ClientLayout';
 import { Button } from '@/components/button';
 import { Star } from '@/components/Stars';
 import { User, ShoppingCart, CheckCircle, AlertCircle } from 'lucide-react';
@@ -11,30 +11,92 @@ import {
   getProductbyId, 
   getProductImagebyId,
   getProductReviewsbyId } from '@/lib/product-actions';
-import { productsData, productImagesData, productReviewData} from '@/data/products';
 import { addToCart } from '@/lib/cart-actions';
 import { notFound, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import styles from './ProductPage.module.css';
 import { mockUserLocalSto, isAuthenticated } from '@/lib/auth';
 
+import { Product, ProductImage, ProductReview } from '@/types/product';
+
 interface ProductPageProps {
   params: Promise<{
-    id: number
+    id: string  
   }>
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
   const router = useRouter();
-  const [product, setProduct] = useState(productsData[0]);
-  const [productImage, setProductImage] = useState(productImagesData[0]);
-  const [productReviews, setProductReviews] = useState(productReviewData[0]); // Added a [0] because it was not finding the nested object without it
+  const [product, setProduct] = useState<Product | null>(null);
+  const [productImage, setProductImage] = useState<ProductImage | null>(null);
+  const [productReviews, setProductReviews] = useState<ProductReview[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState<{
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
+
+  useEffect(() => {
+    async function fetchProductData() {
+      try {
+        const resolvedParams = await params;
+        const productId = Number(resolvedParams.id);
+        
+        console.log('Fetching product with ID:', productId);
+        
+        const foundProduct = await getProductbyId(productId);
+        const foundImage = await getProductImagebyId(productId);
+        const foundReviews = await getProductReviewsbyId(productId);
+        
+        console.log('Product data:', foundProduct);
+        console.log('Image data:', foundImage);
+        console.log('Reviews data:', foundReviews);
+        
+        // Check if the responses are error objects
+        if (foundProduct && !('message' in foundProduct)) {
+          // Create a complete Product object with required fields
+          const completeProduct: Product = {
+            id: productId,
+            name: foundProduct.name,
+            description: foundProduct.description,
+            price: Number(foundProduct.price),
+            storeId: 0, 
+            categoryId: 0, 
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+          setProduct(completeProduct);
+        } else {
+          console.error('Product not found with ID:', productId);
+          router.push('/products');
+          return;
+        }
+        
+        if (foundImage && !('message' in foundImage)) {
+          setProductImage(foundImage as ProductImage);
+        } else {
+          console.warn('No image found for product:', productId);
+          setProductImage(null);
+        }
+        
+        if (foundReviews && !('message' in foundReviews)) {
+          setProductReviews(Array.isArray(foundReviews) ? foundReviews : []);
+        } else {
+          setProductReviews([]);
+        }
+        
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        router.push('/products');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProductData();
+  }, [params, router]);
 
   useEffect(() => {
     mockUserLocalSto();
@@ -51,9 +113,25 @@ export default function ProductPage({ params }: ProductPageProps) {
   }, [notification]);
 
   // Early returns should be at the top level, not nested
+  if (loading) {
+    return (
+      <ClientLayout isLoggedIn={isAuthenticated()} cartItemCount={0}>
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <p>Loading product...</p>
+        </div>
+      </ClientLayout>
+    );
+  }
+
   if (!product) {
-    notFound();
-    return null; // This ensures we don't continue execution
+    return (
+      <ClientLayout isLoggedIn={isAuthenticated()} cartItemCount={0}>
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <h2>Product not found</h2>
+          <p>The product you're looking for doesn't exist.</p>
+        </div>
+      </ClientLayout>
+    );
   }
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -76,7 +154,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         product, 
         productImage, 
         quantity,
-        'Artisan Store' // Connect to Brandon database to have it dynamically
+        'Artisan Store'
       );
 
       if (result.success) {
@@ -85,7 +163,6 @@ export default function ProductPage({ params }: ProductPageProps) {
           message: 'Product added to cart successfully!'
         });
         
-        // Reset quantity to 1 after successful add
         setQuantity(1);
       } else {
         setNotification({
@@ -105,7 +182,6 @@ export default function ProductPage({ params }: ProductPageProps) {
 
   const handleBuyNow = () => {
     handleAddToCart();
-    // Navigate to cart after adding
     setTimeout(() => {
       router.push('/cart');
     }, 1000);
@@ -116,36 +192,56 @@ export default function ProductPage({ params }: ProductPageProps) {
   };
 
   return (
-    // <MainLayout>
-
-  <div className="page-layout">
-      <div className='product-page'>
-        <div className="product-description">
-          <div className='imgs-thbn'>
-            <Image
-            className='thumbnails'
-            src={productImage.imageUrl}
-            alt={`thumbbail image ${productImage.imageUrl}`}
-            width={100}
-            height={70}
-            />
-            <Image
-                  className="product-img" 
-                  src={productImage.imageUrl}
-                  alt={`product Image ${productImage.imageUrl}`}
-                  width={600}
-                  height={400}
-                  priority
-                  
-                />
+    <ClientLayout isLoggedIn={isAuthenticated()} cartItemCount={0}>
+      {/* Notification Banner */}
+      {notification.type && (
+        <div className={`${styles.notification} ${styles[notification.type]}`}>
+          <div className={styles.notificationContent}>
+            {notification.type === 'success' ? (
+              <CheckCircle size={20} />
+            ) : (
+              <AlertCircle size={20} />
+            )}
+            <span>{notification.message}</span>
           </div>
-        
-            {/* Product description and details  */}
-            <div className='product-details'>
+        </div>
+      )}
+
+      <div className={styles.pageLayout}>
+        <div className={styles.productPage}>
+          <div className={styles.productDescription}>
+            <div className={styles.imgsThbn}>
+              {productImage ? (
+                <>
+                  <Image
+                    className={styles.thumbnails}
+                    src={productImage.imageUrl}
+                    alt={`thumbnail image ${product.name}`}
+                    width={100}
+                    height={70}
+                  />
+                  <Image
+                    className={styles.productImg} 
+                    src={productImage.imageUrl}
+                    alt={`product Image ${product.name}`}
+                    width={600}
+                    height={400}
+                    priority
+                  />
+                </>
+              ) : (
+                <div className={styles.noImage}>
+                  <p>No image available</p>
+                </div>
+              )}
+            </div>
+          
+            
+            <div className={styles.productDetails}>
               <h3>{product.name}</h3>
               <p className={styles.price}>${product.price}</p>
-              <div className="stars">
-                <Star rate={productReviews?.rating || 5}/>
+              <div className={styles.stars}>
+                <Star rate={productReviews.length > 0 ? productReviews[0].rating : 5}/>
               </div>
               <p>{product.description}</p>
               <p className={styles.status}>In Stock</p>
@@ -177,7 +273,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                 </Button>
                 
                 <Button 
-                  className={`${styles.buyNow}`} 
+                  className={styles.buyNow} 
                   onClick={handleBuyNow}
                   disabled={isAddingToCart}
                 >
@@ -190,10 +286,10 @@ export default function ProductPage({ params }: ProductPageProps) {
           {/* Reviews and comments */}
           <div className={styles.reviewsContainer}>
             <h3>Top Reviews of this product</h3>
-            {productReviewData && productReviewData.length > 0 ? (
-              productReviewData.map((productReview, index) => (
-                  <div className={"review"} key={index}>
-                  <div className={"user-info"}>
+            {productReviews && productReviews.length > 0 ? (
+              productReviews.map((productReview, index) => (
+                <div className={styles.review} key={index}>
+                  <div className={styles.userInfo}>
                     <User size={30}/> 
                     <p>user {productReview.userId}</p>
                   </div>
@@ -209,13 +305,12 @@ export default function ProductPage({ params }: ProductPageProps) {
             )}
           </div>
 
-          {/* Only if session is started */}
+        
           <div className={styles.newComments}>
             <NewReview productId={product.id}/>
           </div>
         </div>
-      
       </div>
-    // </MainLayout>
+    </ClientLayout>
   );
 }

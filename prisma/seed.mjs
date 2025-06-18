@@ -296,7 +296,7 @@ async function seedProducts() {
           productId: result.id,
           imageUrl: product.productImageUrl,
           sortOrder: 1, // Default sort order
-          fileType: path.extname(product.localImagePath).substring(1), // Get file type from extension
+          fileType: path.extname(product.localImagePath).substring(1).toUpperCase(), // Get file type from extension
         },
       });
 

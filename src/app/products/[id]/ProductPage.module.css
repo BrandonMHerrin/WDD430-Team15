@@ -1,12 +1,16 @@
 .notification {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+    position: fixed;
+  top: 80px; 
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   z-index: 1000;
-  padding: 1rem;
-  text-align: center;
-  font-weight: 500;
+  min-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: slideDown 0.3s ease-out;
 }
 
@@ -29,6 +33,22 @@
   gap: 0.5rem;
   max-width: 600px;
   margin: 0 auto;
+}
+
+.success {
+  background-color: #10b981;
+  color: white;
+}
+
+.error {
+  background-color: #ef4444;
+  color: white;
+}
+
+.notificationContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .viewCartBtn {
