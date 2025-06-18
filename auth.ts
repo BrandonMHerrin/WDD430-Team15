@@ -49,11 +49,16 @@ export const authConfig: NextAuthConfig = {
             data: { lastSignIn: new Date() },
           });
 
-          return {
+          const userToReturn = {
             id: user.id.toString(),
             email: user.email,
             name: `${user.firstName} ${user.lastName}`,
+            image: user.id.toString()
           };
+
+          console.log(userToReturn);
+
+          return userToReturn;
         } catch (error) {
           console.error(`Auth error: ${error}`);
           return null;

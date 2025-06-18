@@ -9,17 +9,44 @@ import Image from "next/image";
 import EmblaCarousel from "@/components/ui/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
 import { Metadata } from "next";
+import Link from "next/link";
+import { getAllProducts } from '@/lib/product-actions';
+
 
 export const metadata: Metadata = {
   title: "Home",
   description: "Welcome to Handcrafted Haven, your destination for artisanal products.",
 }
 
-export default function Home() {
+export default async function Home() {
 
   const OPTIONS: EmblaOptionsType = { loop: true, slidesToScroll: "auto" };
   const SLIDE_COUNT = 8;
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
+
+  const products = await getAllProducts();
+
+  if ('message' in products) {
+    return (
+      <div className="page-layout">
+        <div className={styles.page}>
+          <main className={styles.main}>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '2rem',
+              background: '#f8f9fa',
+              borderRadius: '8px',
+              margin: '2rem'
+            }}>
+              <h2 style={{ color: '#e74c3c' }}>Unable to load products</h2>
+              <p>Error: {products.message}</p>
+              <p>Please check your database connection and try again.</p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-layout">
@@ -47,11 +74,13 @@ export default function Home() {
               <p className={styles.hero_p}>
                 Real Hands. Real Craft. Real You
                 <br></br>
-                <button className={styles.button}>Start Exploring</button>
+                <Link href={"/products"}>
+                  <button className={styles.button}>Start Exploring</button>
+                </Link>
               </p>
             </div>
           </div>
-          <EmblaCarousel slides={SLIDES} options={OPTIONS} />
+          <EmblaCarousel slides={SLIDES} options={OPTIONS} products={products} />
         </main>
 
         <footer className={styles.footer}>

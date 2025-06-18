@@ -3,29 +3,39 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import CartItem from "../../../components/CartItem";
+import Navbar from "@/components/navbar";
+import Toolbar from "@/components/toolbar";
+import CartItem from "@/components/CartItem";
+import { isAuthenticated } from '@/lib/auth';
 import {
-  mockCartItems,
-  calculateCartTotal,
-  getCartItemCount,
-} from "../../../data/cartItems";
-import { CartItem as CartItemType } from "../../../types/cart";
+  getCurrentCartItems,
+  getCurrentCartItemCount,
+  updateCartItemQuantity,
+  removeFromCart,
+  clearCart
+} from "@/lib/cart-actions";
+import { calculateCartTotal } from "@/data/cartItems";
+// import { categoriesData } from "../../../data/categories";
+import { CartItem as CartItemType } from "@/types/cart";
 import {
   mockUserLocalSto,
   getCurrentUser,
   updateUserData,
-} from "../../../lib/auth";
+} from "@/lib/auth";
 import { ShoppingCart, CheckCircle, X } from "lucide-react";
+
+
 
 export default function CartPage() {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
 
   // const categories = categoriesData.filter((category) => category.isActive);
   const cartTotal = calculateCartTotal(cartItems);
-  const itemCount = getCartItemCount(cartItems);
+  const itemCount =  getCurrentCartItemCount();
 
   /**
    * Initialize component - sets up mock auth and loads cart items
@@ -35,9 +45,26 @@ export default function CartPage() {
     mockUserLocalSto();
 
     // Load cart items from mock data
-    setCartItems(mockCartItems);
-    setIsLoading(false);
+    //setCartItems(mockCartItems);
+    //setIsLoading(false);
+    loadCartItems(); //from user data now
   }, []);
+
+
+   const loadCartItems = () => {
+    setIsLoading(true);
+    
+    if (isAuthenticated()) {
+      const userCartItems = getCurrentCartItems();
+      setCartItems(userCartItems);
+    } else {
+      setCartItems([]);
+    }
+    
+    setIsLoading(false);
+  };
+
+
 
   /**
    * Handles category selection from toolbar
@@ -48,73 +75,77 @@ export default function CartPage() {
   };
 
   /**
-   * Updates item quantity in cart
-   * @param itemId - ID of the cart item to update
-   * @param newQuantity - New quantity value
+   * Updates item quantity 
    */
   const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
-    setCartItems((prevItems) => {
-      const updatedItems = prevItems.map((item) =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      );
+    const result = updateCartItemQuantity(itemId, newQuantity);
 
-      // Update user data in localStorage
-      const currentUser = getCurrentUser();
-      if (currentUser) {
-        currentUser.cart.cartItems = updatedItems;
-        currentUser.cart.totalPrice = calculateCartTotal(updatedItems);
-        currentUser.cart.updatedAt = new Date();
-        updateUserData(currentUser);
+      if (result.success) {
+        setCartItems(result.cartItems);
+      } else {
+        console.error('Failed to update car quantity')
       }
-
-      return updatedItems;
-    });
   };
 
+  
   /**
-   * Removes item from cart
-   * @param itemId - ID of the cart item to remove
+   * Removes item
    */
   const handleRemoveItem = (itemId: string) => {
-    setCartItems((prevItems) => {
-      const updatedItems = prevItems.filter((item) => item.id !== itemId);
+   const result = removeFromCart(itemId);
 
-      // Update user data in localStorage
-      const currentUser = getCurrentUser();
-      if (currentUser) {
-        currentUser.cart.cartItems = updatedItems;
-        currentUser.cart.totalPrice = calculateCartTotal(updatedItems);
-        currentUser.cart.updatedAt = new Date();
-        updateUserData(currentUser);
-      }
-
-      return updatedItems;
-    });
+   if (result.success) {
+    setCartItems(result.cartItems);
+   } else {
+    console.error('Failed to remove cart tiem');
+   }
   };
+
 
   /**
    * Handles purchase completion
-   * Shows success modal and clears cart
+   * Shows success msg and clears cart
    */
-  const handlePurchase = () => {
-    // Clear cart items
-    setCartItems([]);
+  const handlePurchase = async () => {
+    if (!isAuthenticated()) {
+      router.push ('/login');
+      return;
+    } 
+    
+    setIsProcessingCheckout(true);
+
+     try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Clear cart 
+      const result = clearCart();
+      
+      if (result.success) {
+        setCartItems([]);
+        setShowSuccessModal(true);
+      } else {
+        console.error('Failed to clear cart after purchase');
+        
+      }
+    } catch (error) {
+      console.error('Checkout failed:', error);
+    } finally {
+      setIsProcessingCheckout(false);
+    }
+  };
 
     // Update user data to empty cart
-    const currentUser = getCurrentUser();
+    /* const currentUser = getCurrentUser();
     if (currentUser) {
       currentUser.cart.cartItems = [];
       currentUser.cart.totalPrice = 0;
       currentUser.cart.updatedAt = new Date();
       updateUserData(currentUser);
-    }
+    } */
 
-    // Show success modal
-    setShowSuccessModal(true);
-  };
 
   /**
-   * Closes success modal and returns to homepage
+   * Closes success msg and returns to homepage
    */
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
@@ -128,6 +159,10 @@ export default function CartPage() {
     router.push("/");
   };
 
+   const refreshCart = () => {
+    loadCartItems();
+  };
+
   if (isLoading) {
     return (
       <div className="page-layout">
@@ -139,6 +174,30 @@ export default function CartPage() {
     );
   }
 
+
+  // Show login prompt if not authenticated
+  if (!isAuthenticated()) {
+    return (
+      <div className="page-layout">
+        <div className="cart-page">
+          <div className="empty-cart">
+            <ShoppingCart size={80} color="var(--artisan-beige)" />
+            <h2>Please log in to view your cart</h2>
+            <p>Sign in to see your saved items and continue shopping</p>
+            <button
+              className="continue-shopping-btn"
+              onClick={() => router.push('/login')}
+            >
+              Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+
   // Empty cart state
   if (cartItems.length === 0 && !showSuccessModal) {
     return (
@@ -147,7 +206,7 @@ export default function CartPage() {
         <div className="cart-page">
           <div className="empty-cart">
             <ShoppingCart size={80} color="var(--artisan-beige)" />
-            <h2>Your Amazon Cart is empty</h2>
+            <h2>Your cart is empty</h2>
             <p>Shop today's deals and discover handmade treasures</p>
             <button
               className="continue-shopping-btn"
@@ -182,7 +241,16 @@ export default function CartPage() {
           <div className="cart-items-section">
             <div className="cart-header">
               <h1>Shopping Cart</h1>
-              <span className="item-count">{itemCount} items</span>
+              <div className="cart-header-actions">
+                <span className="item-count">{itemCount} items</span>
+                <button 
+                  className="refresh-btn"
+                  onClick={refreshCart}
+                  title="Refresh cart"
+                >
+                  ↻
+                </button>
+              </div>
             </div>
 
             <div className="cart-items-list">
@@ -220,9 +288,9 @@ export default function CartPage() {
               <button
                 className="checkout-btn"
                 onClick={handlePurchase}
-                disabled={cartItems.length === 0}
+                disabled={cartItems.length === 0 || isProcessingCheckout}
               >
-                Proceed to Checkout
+                {isProcessingCheckout ? 'Processing...' : 'Proceed to Checkout'}
               </button>
 
               <div className="shipping-note">
@@ -249,10 +317,7 @@ export default function CartPage() {
                 Thank you for your purchase! Your handmade items are being
                 prepared for shipment.
               </p>
-              <p>
-                You'll receive a confirmation email shortly with tracking
-                information.
-              </p>
+              
 
               <button
                 className="continue-btn"
@@ -265,7 +330,8 @@ export default function CartPage() {
         </div>
       )}
 
-      <style jsx>{`
+      <style jsx>
+        {`
         .cart-page {
           min-height: 100vh;
           background: #f3f3f3;
@@ -303,9 +369,31 @@ export default function CartPage() {
           margin: 0;
         }
 
+        .cart-header-actions {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
         .item-count {
           color: var(--text-secondary);
           font-size: 1rem;
+        }
+
+        .refresh-btn {
+          background: none;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          padding: 0.5rem;
+          cursor: pointer;
+          font-size: 1.2rem;
+          color: #666;
+          transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+          background: #f5f5f5;
+          border-color: #bbb;
         }
 
         .cart-items-list {
@@ -571,7 +659,8 @@ export default function CartPage() {
             font-size: 1.5rem;
           }
         }
-      `}</style>
+      `}
+      </style>
     </div>
   );
 }
