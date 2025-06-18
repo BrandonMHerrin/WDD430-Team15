@@ -1,0 +1,30 @@
+# Recommended for most uses
+DATABASE_URL=postgres://neondb_owner:npg_mZ1wdaCTP8LE@ep-lucky-lab-a47xfqc3-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
+
+# For uses requiring a connection without pgbouncer
+DATABASE_URL_UNPOOLED=postgresql://neondb_owner:npg_mZ1wdaCTP8LE@ep-lucky-lab-a47xfqc3.us-east-1.aws.neon.tech/neondb?sslmode=require
+
+# Parameters for constructing your own connection string
+PGHOST=ep-lucky-lab-a47xfqc3-pooler.us-east-1.aws.neon.tech
+PGHOST_UNPOOLED=ep-lucky-lab-a47xfqc3.us-east-1.aws.neon.tech
+PGUSER=neondb_owner
+PGDATABASE=neondb
+PGPASSWORD=npg_mZ1wdaCTP8LE
+
+# Parameters for Vercel Postgres Templates
+POSTGRES_URL=postgres://neondb_owner:npg_mZ1wdaCTP8LE@ep-lucky-lab-a47xfqc3-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
+POSTGRES_URL_NON_POOLING=postgres://neondb_owner:npg_mZ1wdaCTP8LE@ep-lucky-lab-a47xfqc3.us-east-1.aws.neon.tech/neondb?sslmode=require
+POSTGRES_USER=neondb_owner
+POSTGRES_HOST=ep-lucky-lab-a47xfqc3-pooler.us-east-1.aws.neon.tech
+POSTGRES_PASSWORD=npg_mZ1wdaCTP8LE
+POSTGRES_DATABASE=neondb
+POSTGRES_URL_NO_SSL=postgres://neondb_owner:npg_mZ1wdaCTP8LE@ep-lucky-lab-a47xfqc3-pooler.us-east-1.aws.neon.tech/neondb
+POSTGRES_PRISMA_URL=postgres://neondb_owner:npg_mZ1wdaCTP8LE@ep-lucky-lab-a47xfqc3-pooler.us-east-1.aws.neon.tech/neondb?connect_timeout=15&sslmode=require
+
+# Neon Auth environment variables for Next.js
+NEXT_PUBLIC_STACK_PROJECT_ID=ae2bc672-b052-410b-874b-f1207790b1dc
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=pck_n8dceef7dcepmgxgv2dmpxp9q1jsnr3xrjz209ve0dgx8
+STACK_SECRET_SERVER_KEY=ssk_n9zt47qpyjzsjtryczt51dtknqwaabr4mswsbqavr8ffg
+
+# Secret for authentication
+AUTH_SECRET=feU41yuZnPPstUjLSi1WHUAMrGU2oAEJ22ngZSNgo5A=

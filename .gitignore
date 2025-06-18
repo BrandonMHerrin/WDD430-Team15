@@ -168,3 +168,4 @@ jest-coverage/
 *.swp
 *.swo
 .DS_Store
+.env*.local

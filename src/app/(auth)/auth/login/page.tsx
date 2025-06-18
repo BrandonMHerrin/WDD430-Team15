@@ -1,6 +1,11 @@
-import LoginForm from "@/components/login-form/login-form";
+import LoginForm from "@/app/(auth)/auth/login/components/login-form/login-form";
 import styles from "./page.module.css";
 import Link from "next/link";
+
+export const metadata = {
+  title: "Login",
+  description: "Login to your account",
+}
 
 export default function LoginPage() {
   return (
@@ -14,6 +19,11 @@ export default function LoginPage() {
       <Link className={styles.link} href="/auth/newuser">
         Create Account
       </Link>
+      <br />
+      <br />
+      <hr />
+      <br />
+      <p>Want to return to the home page? Click <Link href={'/'} className={styles.link}>here</Link>.</p>
     </section>
   );
 }
