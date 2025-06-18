@@ -13,8 +13,10 @@ import {
   getProductReviewsbyId } from '@/lib/product-actions';
 import { productsData, productImagesData, productReviewData} from '@/data/products';
 import { addToCart } from '@/lib/cart-actions';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import styles from './ProductPage.module.css';
+import { mockUserLocalSto, isAuthenticated } from '@/lib/auth';
 
 interface ProductPageProps {
   params: Promise<{
@@ -114,7 +116,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   };
 
   return (
-    <MainLayout>
+    // <MainLayout>
 
   <div className="page-layout">
       <div className='product-page'>
@@ -214,6 +216,6 @@ export default function ProductPage({ params }: ProductPageProps) {
         </div>
       
       </div>
-    </MainLayout>
+    // </MainLayout>
   );
 }

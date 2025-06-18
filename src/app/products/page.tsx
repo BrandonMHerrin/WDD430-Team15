@@ -6,19 +6,19 @@ import { Suspense } from 'react';
 export default async function Page() {
 
     const products = await getAllProducts()
-  // console.log(`AQUI${products}`)
-    const productCard = [... Array(10)]
+    if ('message' in products) {
+    return <div>Error: {products.message}</div>;
+    }
+ 
   
    
   return (
     <MainLayout>
       <div className="page-layout">
           <div className='product-grid'>
-            {productCard.map((product, index) => (
-              <div className='product' key={index}>
-                  <Suspense fallback={<div>Loading...</div>}>
-                  <ProductCard products={products}/>
-                  </Suspense>
+            {products.slice(0, 10).map((product) => (
+              <div className='product' key={product.id}>                
+                  <ProductCard product={product}/>
                 
               </div>
             ))}

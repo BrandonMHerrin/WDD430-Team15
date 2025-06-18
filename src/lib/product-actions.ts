@@ -3,6 +3,7 @@ import prisma from "./prisma-client";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from 'next/navigation';
+import { Product } from "@prisma/client";
 
 const ProductReviewSchema = z.object({
     id: z.number(),
@@ -15,12 +16,13 @@ const ProductReviewSchema = z.object({
 })
 const CreateReviews = ProductReviewSchema.omit({id:true})
 
-export async function getAllProducts() {
+export async function getAllProducts(): Promise<Product[] | { message: string }> {
     try {
        const products = await prisma.product.findMany()
-       //console.log(products)
-        return JSON.stringify(products)
+    
+        return products
     } catch (error) {
+        console.error(error);
         return { message: "Failed to get products"};
     }
     

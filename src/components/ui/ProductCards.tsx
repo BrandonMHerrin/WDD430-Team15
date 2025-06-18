@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import { 
   getAllProducts, 
   getAllProductImages } from '@/lib/product-actions';
-  import {use} from 'react';
 
-export function ProductCard ({products}:{
-  products:Promise<{
+
+export function ProductCard ({product}:{
+  product:Promise<{
     id: number;
     description: string;
     price: number;
@@ -22,27 +22,17 @@ export function ProductCard ({products}:{
   }>
   }
   ) {
-  
-  // const [ product, images] = await Promise.all([
-  //     getAllProducts(), 
-  //      getAllProductImages()
-  // ]);
-   const allproducts = use(products);
-    console.log(allproducts)
- //example data to test carousel. This can be updated with the database data
-  
-  const product = products[Math.floor(Math.random() * products.length)];
-  
+
    const router = useRouter();
     const gotoProduct = () => {
       router.push(`/products/${product.id}/`)
     }
     return (
         <div className={styles.card_div} key={product.id} onClick={gotoProduct}>
-            <p className={styles.card_div_p}>{product.title}</p>
+            <p className={styles.card_div_p}>{product.name}</p>
             <Image
               className={styles.onSale_img} 
-              src={`/embla-carousel/${product.src}`}
+              src={`/embla-carousel/{product}`}
               alt="placeholder"
               width={500}
               height={300}
