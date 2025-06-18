@@ -9,7 +9,7 @@ import Image from "next/image";
 import EmblaCarousel from "@/components/ui/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
 import { Metadata } from "next";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -21,10 +21,6 @@ export default function Home() {
   const OPTIONS: EmblaOptionsType = { loop: true, slidesToScroll: "auto" };
   const SLIDE_COUNT = 8;
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
-  const router = useRouter();
-      const gotoProductsPage = () => {
-        router.push("/products")
-      }
   return (
     <div className="page-layout">
       <div className={styles.page}>
@@ -51,7 +47,9 @@ export default function Home() {
               <p className={styles.hero_p}>
                 Real Hands. Real Craft. Real You
                 <br></br>
-                <button className={styles.button} onClick={gotoProductsPage}>Start Exploring</button>
+                <Link href={"/products"}>
+                  <button className={styles.button}>Start Exploring</button>
+                </Link>
               </p>
             </div>
           </div>
