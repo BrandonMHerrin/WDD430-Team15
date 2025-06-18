@@ -51,6 +51,8 @@ model Product {
   category Category @relation(fields: [categoryId], references: [id])
   productImages ProductImage[]
   productReviews ProductReview[]
+  cartItems CartItem[]
+  orderItems OrderItem[]
 }
 
 model ProductReview {
@@ -176,10 +178,6 @@ enum FileType {
   PNG
   webp
   WEBP
-  jpeg
-  jpg
-  png
-  webp
 }
 
 enum OrderStatus {
