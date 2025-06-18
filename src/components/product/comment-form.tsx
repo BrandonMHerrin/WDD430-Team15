@@ -28,7 +28,7 @@ export default function NewReview({ product }:ProductProps) {
   
         }
 
-     const userId: string | undefined = session?.user?.id;
+     const userId: string | null | undefined = session?.user?.image;
     return(
         <Form action={formAction}>
             <div className="new-review-container">
