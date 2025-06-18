@@ -50,3 +50,14 @@ export interface ProductReview {
     lastName: string;
   };
 }
+
+export type ProductClient = {
+  id: number;
+  name: string;
+  description: string;
+  price: string; 
+  storeId: number;
+  categoryId: number;
+  createdAt: Date;
+  updatedAt: Date;
+};

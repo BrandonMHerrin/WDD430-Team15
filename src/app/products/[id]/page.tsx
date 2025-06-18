@@ -13,7 +13,7 @@ import {
   getProductReviewsbyId } from '@/lib/product-actions';
 import { addToCart } from '@/lib/cart-actions';
 import { notFound, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import {use, useState, useEffect } from 'react';
 import styles from './ProductPage.module.css';
 import { mockUserLocalSto, isAuthenticated } from '@/lib/auth';
 
@@ -111,6 +111,17 @@ export default function ProductPage({ params }: ProductPageProps) {
       return () => clearTimeout(timer);
     }
   }, [notification]);
+
+  //productsData
+  // useEffect(()=> {
+  //   getProductbyId(productId).then(data => {
+  //     if ('message' in data) {
+  //       console.error(data.message);
+  //       return; 
+  //       }
+  //     setProduct(data)
+  //   })
+  // })
 
   // Early returns should be at the top level, not nested
   if (loading) {

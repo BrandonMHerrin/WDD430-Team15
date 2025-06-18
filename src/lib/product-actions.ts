@@ -3,7 +3,7 @@ import prisma from "./prisma-client";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from 'next/navigation';
-import { Product } from "@prisma/client";
+import { ProductClient } from "@/types/product";
 
 const ProductReviewSchema = z.object({
     id: z.number(),
@@ -107,6 +107,7 @@ export async function getProductImagebyId(id: number) {
 export async function getAllProductReviews() {
     try{
         const reviews = prisma.productReview.findMany()
+        if (!reviews) return { message: 'Reviews not found' };
         return reviews
 
     } catch (error) {
@@ -122,6 +123,7 @@ export async function getProductReviewsbyId(id:number) {
 
             }
         })
+        if (!review) return { message: 'Review not found' };
         return review
 
     } catch (error) {

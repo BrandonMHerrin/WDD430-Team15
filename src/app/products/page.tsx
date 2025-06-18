@@ -9,7 +9,7 @@ export default async function Page() {
     if ('message' in products) {
     return <div>Error: {products.message}</div>;
     }
- 
+  
   
    
   return (

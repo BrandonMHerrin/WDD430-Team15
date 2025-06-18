@@ -1,6 +1,6 @@
 //example API=> https://codesandbox.io/p/sandbox/pp4c69?file=%2Fsrc%2Fjs%2Findex.tsx%3A4%2C11
 "use client";
-import React, { Suspense, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { EmblaOptionsType, EmblaCarouselType } from 'embla-carousel'
 import {
   PrevButton,
