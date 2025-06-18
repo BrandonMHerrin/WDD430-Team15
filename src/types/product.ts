@@ -16,6 +16,9 @@ export interface Product {
     id: number;
     name: string;
   };
+  user?:{
+    id: number;
+  }
   primaryImage?: {
     id: number;
     productId: number;

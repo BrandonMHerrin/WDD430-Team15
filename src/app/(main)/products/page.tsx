@@ -1,4 +1,4 @@
-import MainLayout from '../(main)/layout';
+import MainLayout from '../layout';
 import { ProductCard } from '@/components/ui/ProductCards';
 import { Suspense } from 'react';
 import { getAllProducts } from '@/lib/product-actions'
@@ -13,7 +13,6 @@ export default async function Page() {
   
    
   return (
-    <MainLayout>
       <div className="page-layout">
           <div className='product-grid'>
             {products.slice(0, 10).map((product) => (
@@ -24,6 +23,5 @@ export default async function Page() {
             ))}
           </div>       
       </div>
-    </MainLayout>
   );
 }

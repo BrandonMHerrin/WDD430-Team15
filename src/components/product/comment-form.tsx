@@ -5,6 +5,7 @@ import Form from "next/form";
 import { useActionState } from "react";
 import { RateProduct } from "../Stars";
 import { Product } from "@/types/product";
+import { useSession } from "next-auth/react";
 
 interface ProductProps {
     product: Product
@@ -18,11 +19,20 @@ export default function NewReview({ product }:ProductProps) {
         success: false
     }
      const [state, formAction] = useActionState(createReview, initialState);
+     const { data: session } = useSession();
+     console.log("SESSION", session);
+     if (!session) {
+        return <div className="new-review-container">
+            <p>Log in to make a comment about this product</p>
+            </div>
+  
+        }
 
-     
+     const userId: string | undefined = session?.user?.id;
     return(
         <Form action={formAction}>
             <div className="new-review-container">
+                <p>{userId}</p>
                 <div className="new-review">
                     <input
                     name="productId"
@@ -30,14 +40,13 @@ export default function NewReview({ product }:ProductProps) {
                     readOnly={true}
                     type="hidden"
                     />
-                    <input 
-                    name="userId" 
-                    id="userId"
-                    type="hidden"
-                    readOnly={true}
-                    value={3}
-                  
-                    />
+                    {userId && (
+                        <input 
+                        name="userId" 
+                        type="hidden" 
+                        value={userId} 
+                        readOnly />
+                    )}
                     <RateProduct/>
                     <input
                     name="title"
@@ -47,7 +56,7 @@ export default function NewReview({ product }:ProductProps) {
                     required
                     />
                     <textarea 
-                    name="review-text" 
+                    name="reviewText" 
                     placeholder="Leave your opinion on the product"
                      ></textarea>
                 </div>

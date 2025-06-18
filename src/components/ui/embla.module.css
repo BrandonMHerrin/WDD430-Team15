@@ -33,6 +33,7 @@
   padding: 0.5rem;
   background-color: var(--artisan-cream);
   border-radius: 10px;
+  cursor: pointer;
 }
 .card_div_p {
   font-weight: 600;

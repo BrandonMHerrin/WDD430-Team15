@@ -22,7 +22,7 @@ export async function getAllProducts(){
           include: {
                store: {select: {id: true, name: true}  },
                category: {select: {id: true, name: true}  },
-               productImages: { orderBy: {sortOrder: 'asc'}, take: 1}    },
+               productImages: { orderBy: {sortOrder: 'asc'}, take: 1},    },
            orderBy: {createdAt: 'desc' }
        })
     
@@ -84,7 +84,7 @@ export async function getProductbyId(productId: number) {
 
 export async function getAllProductImages() {
     try {
-        const images = prisma.productImage.findMany()
+        const images = await prisma.productImage.findMany()
         return images
     } catch (error) {
         return { message: "Failed to get images"};
@@ -106,7 +106,7 @@ export async function getProductImagebyId(id: number) {
 //Product Reviews
 export async function getAllProductReviews() {
     try{
-        const reviews = prisma.productReview.findMany()
+        const reviews = await prisma.productReview.findMany()
         if (!reviews) return { message: 'Reviews not found' };
         return reviews
 
@@ -117,7 +117,7 @@ export async function getAllProductReviews() {
 
 export async function getProductReviewsbyId(id:number) {
     try{
-        const review = prisma.productReview.findMany({
+        const review = await prisma.productReview.findMany({
             where:{ 
                 productId:(id)
 
@@ -149,7 +149,7 @@ export async function createReview(
         console.log("creating Review")
         const validatedFields = CreateReviews.safeParse({       
             title : formData.get('title'),
-            reviewText : formData.get('review-text'),
+            reviewText : formData.get('reviewText'),
             rating: formData.get('rating'),
             productId : formData.get('productId'),
             userId : formData.get('userId'),
@@ -169,7 +169,7 @@ export async function createReview(
 
     try{
         
-       const result = prisma.productReview.create({
+       const result = await prisma.productReview.create({
         data: {
             title,
             reviewText,

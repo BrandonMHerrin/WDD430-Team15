@@ -260,7 +260,18 @@
 .newComments {
   margin-top: 2rem;
 }
-
+/* //Not FOUND Page */
+.not-found {
+display: flex;
+flex-direction: row;
+}
+.face{
+  font-size: 3rem;
+}
+.gback-btn {
+  font-size: 2rem;
+  font-weight: 500;
+}
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .productPage {
