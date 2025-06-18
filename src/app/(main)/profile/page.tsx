@@ -6,12 +6,13 @@ import { useSession } from 'next-auth/react';
 import SellerProfile from '@/components/SellerProfile/SellerProfile';
 
 export default function ProfilePage() {
+  // Get the user session and session status
   const { data: session, status } = useSession();
   const [userData, setUserData] = useState<any>(null);
 
+  // Load user profile data once session is available
   useEffect(() => {
     if (session?.user?.email) {
-      // Cargar datos del usuario
       fetch('/api/profile/get', {
         method: 'POST',
         headers: {
@@ -31,6 +32,7 @@ export default function ProfilePage() {
     }
   }, [session]);
 
+  // Add an image to a specific product
   const handleAddImage = async (productId: number, imageUrl: string) => {
     try {
       const res = await fetch('/api/product/upload-image', {
@@ -41,6 +43,7 @@ export default function ProfilePage() {
       const data = await res.json();
 
       if (data.success) {
+        // Update userData with new image for the correct product
         setUserData((u: any) => ({
           ...u,
           stores: u.stores.map((store: any) => ({
@@ -64,6 +67,7 @@ export default function ProfilePage() {
     }
   };
 
+  // Add a new product to a store
   const handleAddProduct = async (
     storeId: number,
     name: string,
@@ -94,6 +98,7 @@ export default function ProfilePage() {
       const data = await res.json();
 
       if (data.success) {
+        // Update userData with new product in the correct store
         setUserData((u: any) => ({
           ...u,
           stores: u.stores.map((store: any) =>
@@ -106,38 +111,46 @@ export default function ProfilePage() {
           ),
         }));
       } else {
-        alert('Error creando producto');
+        alert('Error creating product');
       }
     } catch (error) {
-      console.error('Error en handleAddProduct:', error);
-      alert('Error creando producto');
+      console.error('Error in handleAddProduct:', error);
+      alert('Error creating product');
     }
   };
 
+  // Show loading message while session is being verified
   if (status === 'loading') {
     return <p className="text-center mt-10">Loading Profile...</p>;
   }
 
+  // Show message if user is not authenticated
   if (!session?.user) {
     return <p className="text-center mt-10 text-red-600">You must log in to view your profile.</p>;
   }
 
+  // Show message while profile data is loading
   if (!userData) {
     return <p className="text-center mt-10">Loading user data...</p>;
   }
 
-  // Extraer productos con sus imágenes para pasarlos a SellerProfile
+  // Extract product list and format data to pass to SellerProfile component
   const userProducts = userData.stores
     ? userData.stores.flatMap((store: any) =>
         (store.products || []).map((p: any) => ({
           id: p.id,
           name: p.name,
+          description: p.description ?? '[No Description]',
+          price: p.price ?? '[No Price]',
+          categoryName: p.category?.name || '[No category]',
           images: (p.productImages || []).map(
-            (img: any) => img.imageUrl || img.url || img // Ajusta según cómo es el campo URL en tus imágenes
+            (img: any) => img.imageUrl || img.url || img
           ),
         }))
       )
     : [];
+
+  console.log('userProducts:', userProducts); // Debugging log
 
   return (
     <div className="profile-card">
@@ -151,7 +164,6 @@ export default function ProfilePage() {
         stores={userData.stores}
         userProducts={userProducts}
         onAddProduct={handleAddProduct}
-        // Ya no pasamos categories aquí
       />
     </div>
   );

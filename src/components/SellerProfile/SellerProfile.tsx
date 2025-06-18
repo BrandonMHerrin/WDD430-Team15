@@ -1,8 +1,10 @@
 'use client';
+
 import '@/components/SellerProfile/seller-profile.css';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+// Define the structure of a product
 interface ProductType {
   id: number;
   name: string;
@@ -10,8 +12,10 @@ interface ProductType {
   description?: string;
   price?: number;
   categoryId?: number;
+  categoryName?: string;
 }
 
+// Props structure for the SellerProfile component
 interface SellerProfileProps {
   name: string;
   role: string;
@@ -31,6 +35,7 @@ interface SellerProfileProps {
   ) => Promise<void>;
 }
 
+// SellerProfile component to display and edit seller info and manage products
 const SellerProfile: React.FC<SellerProfileProps> = ({
   name,
   role,
@@ -44,12 +49,14 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
 }) => {
   const router = useRouter();
 
+  // Profile state management
   const [image, setImage] = useState<string>(avatarUrl);
   const [editablePhone, setEditablePhone] = useState<string>(phone);
   const [editableBio, setEditableBio] = useState<string>(bio);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [imageUrlInput, setImageUrlInput] = useState<string>(avatarUrl);
 
+  // Product creation form state
   const [newProductName, setNewProductName] = useState('');
   const [newProductDescription, setNewProductDescription] = useState('');
   const [newProductPrice, setNewProductPrice] = useState('');
@@ -58,9 +65,11 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
     stores.length > 0 ? stores[0].id : null
   );
 
+  // Category state
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
+  // Fetch available product categories from API
   useEffect(() => {
     fetch('/api/category/list')
       .then((res) => res.json())
@@ -78,6 +87,12 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
       });
   }, []);
 
+  // Log loaded products to console for debugging
+  useEffect(() => {
+    console.log('userProducts:', userProducts);
+  }, [userProducts]);
+
+  // Function to handle adding a new product
   const handleAddProduct = () => {
     if (!selectedStoreId || !newProductName.trim() || newProductPrice.trim() === '') {
       alert('Please fill all required fields');
@@ -89,7 +104,6 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
     }
 
     const parsedPrice = parseFloat(newProductPrice);
-
     if (isNaN(parsedPrice) || parsedPrice < 0) {
       alert('Please enter a valid positive number for price');
       return;
@@ -104,12 +118,14 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
       newProductImageUrl.trim()
     );
 
+    // Reset product form fields
     setNewProductName('');
     setNewProductDescription('');
     setNewProductPrice('');
     setNewProductImageUrl('');
   };
 
+  // Function to save profile changes
   const handleSave = async () => {
     const updatedData = {
       email,
@@ -128,7 +144,7 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
       const result = await res.json();
 
       if (result.success) {
-        alert('Changes saved correctly!');
+        alert('Changes saved successfully!');
         setImage(imageUrlInput);
         setIsEditing(false);
       } else {
@@ -140,11 +156,13 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
     }
   };
 
+  // Navigation to other pages
   const handleGoToCart = () => router.push('/cart');
   const handleGoHome = () => router.push('/');
 
   return (
     <>
+      {/* Profile Header: avatar, name, role */}
       <div className="profile-header">
         <label
           htmlFor="profile-image-url"
@@ -155,6 +173,7 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
           <img src={image} alt="Profile" className="profile-image" />
         </label>
 
+        {/* Input to change avatar URL */}
         {isEditing && (
           <input
             id="profile-image-url"
@@ -174,6 +193,7 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
         </div>
       </div>
 
+      {/* Contact Information Section */}
       <div className="profile-contact-info">
         <div>
           <strong>Email: </strong> {email}
@@ -193,6 +213,7 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
         )}
       </div>
 
+      {/* Biography Section */}
       {isEditing ? (
         <textarea
           className="profile-textarea profile-bio"
@@ -207,10 +228,11 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
         </div>
       )}
 
+      {/* Profile Control Buttons */}
       <div className="profile-buttons">
         {!isEditing ? (
           <button className="profile-button" onClick={() => setIsEditing(true)}>
-            Change Information
+            Edit Profile
           </button>
         ) : (
           <button className="profile-button" onClick={handleSave}>
@@ -221,13 +243,14 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
           Go to Dashboard
         </button>
         <button className="profile-contact-button" onClick={handleGoToCart}>
-          Go to the Cart
+          Go to Cart
         </button>
       </div>
 
-      {/* --- Agregar Producto --- */}
+      {/* Add Product Section */}
       <div className="add-product-section">
         <h3>Add New Product</h3>
+        {/* Store Selector */}
         <select
           value={selectedStoreId ?? ''}
           onChange={(e) => setSelectedStoreId(Number(e.target.value))}
@@ -239,9 +262,10 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
           ))}
         </select>
 
+        {/* Product Input Fields */}
         <input
           type="text"
-          placeholder="Product's Name"
+          placeholder="Product Name"
           value={newProductName}
           onChange={(e) => setNewProductName(e.target.value)}
           style={{ marginLeft: '0.5rem' }}
@@ -261,6 +285,7 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
           style={{ marginLeft: '0.5rem' }}
         />
 
+        {/* Category Selector */}
         <select
           value={selectedCategoryId ?? ''}
           onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
@@ -273,6 +298,7 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
           ))}
         </select>
 
+        {/* Image URL Input */}
         <input
           type="text"
           placeholder="Image URL"
@@ -285,7 +311,7 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
         </button>
       </div>
 
-      {/* --- Lista de Productos --- */}
+      {/* Product List Section */}
       <div className="products-section">
         <h2>Your Products</h2>
         {userProducts.length === 0 && <p>No products added yet.</p>}
@@ -293,6 +319,7 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
           <div key={prod.id} className="product-card">
             <strong>{prod.name}</strong>
 
+            {/* Product Image */}
             {prod.images.length > 0 && (
               <img
                 src={
@@ -301,27 +328,26 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
                     : prod.images[0]?.imageUrl || ''
                 }
                 alt={prod.name}
-                style={{ maxWidth: '300px', marginTop: '0.5rem' }}
+                style={{
+                  maxWidth: '300px',
+                  marginTop: '0.5rem',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                }}
               />
             )}
 
-            {prod.description && (
-              <p>
-                <strong>Description:</strong> {prod.description}
-              </p>
-            )}
-
-            {typeof prod.price === 'number' && (
-              <p>
-                <strong>Price:</strong> ${prod.price}
-              </p>
-            )}
-
-            {prod.categoryId && (
-              <p>
-                <strong>Category ID:</strong> {prod.categoryId}
-              </p>
-            )}
+            {/* Product Details */}
+            <p>
+              <strong>Description:</strong> {prod.description ?? '[none]'}
+            </p>
+            <p>
+              <strong>Price:</strong>{' '}
+              {prod.price != null ? `$${prod.price}` : '[none]'}
+            </p>
+            <p>
+              <strong>Category:</strong> {prod.categoryName || '[none]'}
+            </p>
           </div>
         ))}
       </div>

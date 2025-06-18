@@ -1,6 +1,6 @@
 /* seller-profile.css */
 
-/* --- Estilos actuales (sin cambios) --- */
+/* --- Main Profile Styles --- */
 .profile-card {
   background-color: white;
   border-radius: 12px;
@@ -155,23 +155,24 @@
   box-shadow: 0 6px 14px rgba(58,71,87,0.5);
 }
 
-/* --- NUEVOS ESTILOS para productos --- */
 
-/* Contenedor para agregar nuevo producto */
+/* --- Product Styles --- */
+
+/* Container for adding new product */
 .add-product-section {
   border-top: 1px solid var(--border-light);
   padding: 2rem;
   margin-top: 2rem;
-  background-color: #f9f9f9; /* o usa una variable como var(--background-muted) */
+  background-color: #f9f9f9; /* or use a variable like var(--background-muted) */
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  max-width: 700px;      /* limita ancho para no expandirse demasiado */
-  margin-left: auto;     /* centra horizontalmente */
-  margin-right: auto;    /* centra horizontalmente */
-  text-align: center;    /* centra el texto dentro */
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .add-product-section h3 {
@@ -193,37 +194,35 @@
 
 .add-product-section button {
   padding: 0.5rem 1.25rem;
-  background-color: var(--primary-color, #b8860b); /* Fallback if no variable */
+  background-color: var(--primary-color, #b8860b);
   color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.2s ease;
-  
 }
 
 .add-product-section button:hover {
   background-color: var(--primary-color-hover, #E2725B);
 }
 
-
-/* Lista de productos */
+/* Products section */
 .products-section h2 {
-    font-size: 2rem;
-    margin-left: auto;     /* centra horizontalmente */
-    margin-right: auto;    /* centra horizontalmente */
-    text-align: center;    /* centra el texto dentro */
+  font-size: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
+
 .products-list {
   margin-top: 2rem;
   display: grid;
   grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
   gap: 1.5rem;
-  
 }
 
-/* Card individual de producto */
+/* Individual product card */
 .product-card {
   background-color: #fafafa;
   border-radius: 12px;
@@ -275,15 +274,13 @@
 }
 
 
-
-/* Responsive */
+/* --- Responsive --- */
 
 @media (max-width: 480px) {
   .profile-card {
     padding: 1.5rem;
     max-width: 100%;
   }
-}
   .profile-header {
     flex-direction: column;
     align-items: center;
@@ -306,4 +303,4 @@
   .product-image {
     height: 80px;
   }
-
+}
