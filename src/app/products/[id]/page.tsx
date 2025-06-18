@@ -14,9 +14,10 @@ import {
 import { productsData, productImagesData, productReviewData} from '@/data/products';
 import { addToCart } from '@/lib/cart-actions';
 import { notFound, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import {use, useState, useEffect } from 'react';
 import styles from './ProductPage.module.css';
 import { mockUserLocalSto, isAuthenticated } from '@/lib/auth';
+import { ProductClient } from '@/types/product';
 
 interface ProductPageProps {
   params: Promise<{
@@ -26,6 +27,7 @@ interface ProductPageProps {
 
 export default function ProductPage({ params }: ProductPageProps) {
   const router = useRouter();
+  const productId = Number(use(params).id);
   const [product, setProduct] = useState(productsData[0]);
   const [productImage, setProductImage] = useState(productImagesData[0]);
   const [productReviews, setProductReviews] = useState(productReviewData[0]); // Added a [0] because it was not finding the nested object without it
@@ -49,6 +51,17 @@ export default function ProductPage({ params }: ProductPageProps) {
       return () => clearTimeout(timer);
     }
   }, [notification]);
+
+  //productsData
+  // useEffect(()=> {
+  //   getProductbyId(productId).then(data => {
+  //     if ('message' in data) {
+  //       console.error(data.message);
+  //       return; 
+  //       }
+  //     setProduct(data)
+  //   })
+  // })
 
   // Early returns should be at the top level, not nested
   if (!product) {

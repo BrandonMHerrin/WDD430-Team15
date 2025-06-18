@@ -3,7 +3,7 @@ import prisma from "./prisma-client";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from 'next/navigation';
-import { Product } from "@prisma/client";
+import { ProductClient } from "@/types/product";
 
 const ProductReviewSchema = z.object({
     id: z.number(),
@@ -16,11 +16,14 @@ const ProductReviewSchema = z.object({
 })
 const CreateReviews = ProductReviewSchema.omit({id:true})
 
-export async function getAllProducts(): Promise<Product[] | { message: string }> {
+export async function getAllProducts(): Promise<ProductClient[] | { message: string }> {
     try {
        const products = await prisma.product.findMany()
-    
-        return products
+        const safeProducts: ProductClient[] = products.map(product => ({
+      ...product,
+      price: product.price.toString(), 
+        }));
+        return safeProducts
     } catch (error) {
         console.error(error);
         return { message: "Failed to get products"};
@@ -32,15 +35,14 @@ export async function getProductbyId(productId:number) {
        const product = await prisma.product.findUnique({
             where:{ 
                 id:productId
-            },
-            select: {
-                name: true,
-                description: true,
-                price: true
             }
         })
+        if (!product) return { message: 'Product not found' };
         // console.log(product)
-        return product
+        return {
+      ...product,
+      price: product.price.toString(), 
+    };
     } catch (error) {
         return { message: "Failed to get product"};
     }
@@ -71,6 +73,7 @@ export async function getProductImagebyId(id:number) {
 export async function getAllProductReviews() {
     try{
         const reviews = prisma.productReview.findMany()
+        if (!reviews) return { message: 'Reviews not found' };
         return reviews
 
     } catch (error) {
@@ -86,6 +89,7 @@ export async function getProductReviewsbyId(id:number) {
 
             }
         })
+        if (!review) return { message: 'Review not found' };
         return review
 
     } catch (error) {

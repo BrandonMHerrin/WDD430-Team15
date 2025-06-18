@@ -1,6 +1,6 @@
 //example API=> https://codesandbox.io/p/sandbox/pp4c69?file=%2Fsrc%2Fjs%2Findex.tsx%3A4%2C11
 "use client";
-import React, { Suspense, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { EmblaOptionsType, EmblaCarouselType } from 'embla-carousel'
 import {
   PrevButton,
@@ -11,9 +11,8 @@ import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
 import  styles  from "./embla.module.css"
 import { ProductCard } from "./ProductCards";
-import { 
-  getAllProducts} from '@/lib/product-actions';
-import {use} from 'react';
+import { getAllProducts } from '@/lib/product-actions';
+import { ProductClient } from '@/types/product';
 
 type PropType = {
   slides: number[]
@@ -43,10 +42,21 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
     onNextButtonClick
   } = usePrevNextButtons(emblaApi, onNavButtonClick)
 
-  const products = use(getAllProducts())
-  if ('message' in products) {
-    return <div>Error: {products.message}</div>;
-    }
+
+  const [products, setProducts] = useState<ProductClient[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getAllProducts().then(data => {
+      if ('message' in data) {
+    console.error(data.message);
+    return; 
+  }
+      setProducts(data);
+      setLoading(false);
+    });
+  }, []);
+  if (loading) return <div>Loading...</div>;
   return (
     <section className={styles.embla}>
       <div className={styles.embla__viewport} ref={emblaRef}>
@@ -55,10 +65,12 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
             <div className={styles.embla__slide} key={index}>
               
               <div className={styles.embla__slide__number}>
-               
-                <ProductCard products={products}/>
-               
+               {products.map((product) => (
+              <div className='product' key={product.id}>                
+                  <ProductCard product={product}/>
                 
+              </div>
+            ))}
               </div>
               
             </div>

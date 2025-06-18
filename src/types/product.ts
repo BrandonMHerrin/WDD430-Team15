@@ -1,9 +1,12 @@
 export interface Product {
   id: number;
-  name: string;
-  description: string;
-  price: number;
-  storeId: number;
+    name: string;
+    description: string;
+    price: string;
+    storeId: number;
+    categoryId: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface ProductImage {
@@ -23,3 +26,14 @@ export interface ProductReview {
   userId: number;
   createdAt: Date;
 }
+
+export type ProductClient = {
+  id: number;
+  name: string;
+  description: string;
+  price: string; 
+  storeId: number;
+  categoryId: number;
+  createdAt: Date;
+  updatedAt: Date;
+};

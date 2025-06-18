@@ -2,25 +2,18 @@
 import Image from "next/image";
 import styles from "./embla.module.css";
 import { useRouter } from 'next/navigation';
-import { 
-  getAllProducts, 
-  getAllProductImages } from '@/lib/product-actions';
 
-
-export function ProductCard ({product}:{
-  product:Promise<{
-    id: number;
-    description: string;
-    price: number;
-    name: string;
-    storeId: number;
-    categoryId: number;
-    createdAt: Date;
-    updatedAt: Date;
-    }[] | {
-    message: string;
-  }>
-  }
+export type Product = {
+  id: number;
+  description: string;
+  price: string;
+  name: string;
+  storeId: number;
+  categoryId: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+export function ProductCard ({product}:{ product: Product}
   ) {
 
    const router = useRouter();
